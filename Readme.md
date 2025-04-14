@@ -5,7 +5,7 @@ PdfApp to aplikacja Django służąca do obsługi plików Pdf. Będzie umożliwi
 ## Wymagania
 
 - Python 3.x
-- MongoDB
+- MongoDB Community Server
 
 ## Instrukcja uruchomienia
 
@@ -28,12 +28,11 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-### 4. Tworzenie migracji oraz superuzytkownika
+### 4. Tworzenie migracji
 
 ```bash
 cd pdfapp
 python manage.py migrate
-python manage.py createsuperuser
 ```
 
 ### 5. Uruchomienie serwera
@@ -41,4 +40,4 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-Po uruchomieniu aplikacja będzie dostępna pod adresem http://127.0.0.1:8000/, a panel administratora pod http://127.0.0.1:8000/admin.
+Po uruchomieniu aplikacja będzie dostępna pod adresem http://127.0.0.1:8000/.
