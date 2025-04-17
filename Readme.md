@@ -5,7 +5,6 @@ PdfApp to aplikacja Django służąca do obsługi plików Pdf. Będzie umożliwi
 ## Wymagania
 
 - Python 3.x
-- MongoDB Community Server
 
 ## Instrukcja uruchomienia
 
