@@ -56,7 +56,7 @@ ROOT_URLCONF = 'pdfapp.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'pdfhandler', 'views')],
+        'DIRS': [os.path.join(BASE_DIR, 'pdfhandler', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -79,10 +79,11 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'pdfdb',
+        'CLIENT': {
+            'host': f"mongodb://{os.getenv('MONGO_USER')}:{os.getenv('MONGO_PASSWORD')}@{os.getenv('MONGO_HOST')}:27017/pdfdb?authSource=admin",
+        }
     }
 }
-
-AUTH_USER_MODEL = 'pdfhandler.User'
 
 
 # Password validation
