@@ -17,8 +17,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         }
 
     def validate(self, data):
-        if User.objects.filter(email__iexact=data["email"]).exists():
-            raise serializers.ValidationError({"email": "User with that email already exists"})
+        # if User.objects.filter(email__iexact=data["email"]).exists():
+        #     raise serializers.ValidationError({"email": "User with that email already exists"})
         if data["password"] != data["password2"]:
             raise serializers.ValidationError({"password": "Passwords dont match"})
         return data
@@ -28,6 +28,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             username=validated_data["username"],
             email=validated_data["email"],
             password=validated_data["password"],
+            is_active=False,
         )
         return user
     
