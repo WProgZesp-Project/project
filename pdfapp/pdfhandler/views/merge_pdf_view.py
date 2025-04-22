@@ -38,5 +38,4 @@ def merge_pdfs(request):
     )
 
     response = FileResponse(open(temp_out_path, 'rb'), as_attachment=True, filename='merged.pdf')
-    # Optionally, clean up the temp file after sending (if using a background task)
     return response
