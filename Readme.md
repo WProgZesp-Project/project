@@ -53,4 +53,17 @@ python manage.py migrate
 python manage.py runserver
 ```
 
+### 7. Obsługa email
+Aby obsługa email działała, należy dodać zmienne środowiskowe:
+```
+EMAIL=progzesppdf@gmail.com
+EMAIL_PASS=tztgdqxdykuppjop
+```
+
+### 8. Lokalne testowanie
+Aby nie musieć za każdą rejestracją potwierdzać maila, należy ustawić zmienną środowiskową:
+```
+TEST=true
+```
+
 Po uruchomieniu aplikacja będzie dostępna pod adresem http://127.0.0.1:8000/.
