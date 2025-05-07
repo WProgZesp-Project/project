@@ -2,7 +2,7 @@ from django.http import JsonResponse, FileResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from PyPDF2 import PdfMerger
-from ..models import MergeHistory
+from ..models import OperationHistory, OperationType
 import tempfile
 import os
 
@@ -31,11 +31,14 @@ def merge_pdfs(request):
         merged_filename = os.path.basename(temp_out.name)
         temp_out_path = temp_out.name
 
-    # Save history
-    MergeHistory.objects.create(
-        filenames=','.join(filenames),
-        merged_filename=merged_filename
-    )
+    # Save history if user is logged in
+    if request.user.is_authenticated:
+        OperationHistory.objects.create(
+            user = request.user,
+            operation_type=OperationType.MERGE,
+            input_filenames=filenames,
+            result_filename=merged_filename
+        )
 
     response = FileResponse(open(temp_out_path, 'rb'), as_attachment=True, filename='merged.pdf')
     return response
