@@ -1,0 +1,5 @@
+# .flake8
+[flake8]
+max-line-length = 120
+ignore = E501, W291, W292, E302, E305, E221, W293, E265, E722
+exclude = venv, migrations
