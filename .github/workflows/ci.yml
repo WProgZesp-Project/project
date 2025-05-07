@@ -34,7 +34,7 @@ jobs:
       POSTGRES_PASSWORD: pdfpass
       POSTGRES_HOST: localhost
       POSTGRES_PORT: 5432
-      TEST: true  # pomijanie maila w testach
+      TEST: true
       DJANGO_SETTINGS_MODULE: pdfapp.settings
 
     steps:
@@ -50,16 +50,22 @@ jobs:
       run: |
         pip install --upgrade pip
         pip install -r requirements.txt
-        pip install flake8 pytest python-dotenv
+        pip install flake8 pytest pytest-django python-dotenv
 
     - name: Run flake8 (lint)
       run: flake8 .
 
     - name: Apply migrations
-      run: python pdfapp/manage.py migrate
+      working-directory: ./pdfapp
+      run: |
+        export PYTHONPATH=$PYTHONPATH:$(pwd)
+        python manage.py migrate
 
     - name: Run Django tests
-      run: pytest
+      working-directory: ./pdfapp
+      run: |
+        export PYTHONPATH=$PYTHONPATH:$(pwd)
+        pytest
 
   deploy:
     name: Deploy to AWS (test)
