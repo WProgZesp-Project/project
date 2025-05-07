@@ -3,7 +3,7 @@ from .views.index_view import index
 from .views.registration import UserRegistrationView, activate
 from .views.login import UserLoginView
 from .views.logout import UserLogoutView
-
+from .views.merge_pdf_view import merge_pdfs
 
 urlpatterns = [
     path('', index, name='index'),
