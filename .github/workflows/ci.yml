@@ -56,9 +56,7 @@ jobs:
       run: flake8 .
 
     - name: Apply migrations
-      run: |
-        cd pdfapp
-        python manage.py migrate
+      run: python pdfapp/manage.py migrate
 
     - name: Run Django tests
       run: pytest
