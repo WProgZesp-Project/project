@@ -1,0 +1,90 @@
+name: CI/CD for PdfApp
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  lint-and-test:
+    name: Lint & Test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_DB: pdfdb
+          POSTGRES_USER: pdfuser
+          POSTGRES_PASSWORD: pdfpass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      POSTGRES_DB: pdfdb
+      POSTGRES_USER: pdfuser
+      POSTGRES_PASSWORD: pdfpass
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      TEST: true  # pomijanie maila w testach
+      DJANGO_SETTINGS_MODULE: pdfapp.settings
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install flake8 pytest python-dotenv
+
+    - name: Run flake8 (lint)
+      run: flake8 .
+
+    - name: Apply migrations
+      run: python manage.py migrate
+
+    - name: Run Django tests
+      run: pytest
+
+  deploy:
+    name: Deploy to AWS (test)
+    needs: lint-and-test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install AWS CLI
+      run: pip install awscli
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-central-1
+
+    - name: Deploy to test environment
+      run: ./deploy_to_test_env.sh
