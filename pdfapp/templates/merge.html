@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Scalanie plików</title>
+  <style>
+    /* Cała strona - szare tło i centrowanie */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: sans-serif;
+    }
+    /* Pasek nagłówka */
+    .header-bar {
+      width: 100%;
+      background: #6b63639a;
+      color: #fff;
+      padding: 10px 0;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .header-bar a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: bold;
+    }
+    .header-bar a.active {
+      border-bottom: 2px solid rgb(197, 121, 121);
+    }
+    /* Czerwony kontener w środku */
+    .container {
+      width: 400px;
+      height: 400px;
+      background: rgb(202, 31, 31);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(48, 46, 46, 0.1);
+      padding: 20px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      margin-top: 20px;
+    }
+    /* Białe wnętrze dla elementów interaktywnych */
+    .dropzone,
+    .file-list,
+    .actions {
+      background: #fff;
+      border-radius: 4px;
+    }
+    .dropzone {
+      border: 2px dashed #888;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      margin-bottom: 16px;
+    }
+    .file-list {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 16px;
+      padding: 8px;
+    }
+    .file-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      padding: 4px;
+      border-bottom: 1px solid #eee;
+    }
+    .file-item span { flex-grow: 1; }
+    .file-item a {
+      margin-left: 8px;
+      text-decoration: none;
+      color: #333;
+    }
+    .file-item form button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1em;
+      color: #c00;
+    }
+    .actions {
+      text-align: center;
+      padding: 8px;
+    }
+    .actions button {
+      padding: 8px 16px;
+      font-size: 1em;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .actions button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Pasek nagłówka -->
+  <div class="header-bar">
+    <a href="#" class="active">Strona Główna</a>
+    <a href="#">O nas</a>
+    <a href="#">Kontakt</a>
+  </div>
+
+  <!-- Czerwony kontener -->
+  <div class="container">
+    <h1 style="text-align:center; margin:0 0 16px 0; color:#fff;">Scalanie plików</h1>
+
+    <!-- Upload -->
+    <div class="dropzone" onclick="document.getElementById('file-input').click()">
+      Przeciągnij pliki tutaj lub kliknij, aby wybrać
+    </div>
+    <form action="{% url 'upload_files' %}" method="post" enctype="multipart/form-data" style="display:none;">
+      {% csrf_token %}
+      <input id="file-input" type="file" name="files" multiple onchange="this.form.submit()">
+    </form>
+
+    <!-- Lista plików -->
+    <div class="file-list">
+      {% if uploaded %}
+        {% for file in uploaded %}
+          <div class="file-item">
+            <span>{{ file.name }}</span>
+            <a href="{% url 'reorder' 'up' forloop.counter0 %}">↑</a>
+            <a href="{% url 'reorder' 'down' forloop.counter0 %}">↓</a>
+            <form action="{% url 'delete_file' forloop.counter0 %}" method="post" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit">✖</button>
+            </form>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p>Brak plików</p>
+      {% endif %}
+    </div>
+
+    <!-- Scalanie -->
+    <div class="actions">
+      <form action="{% url 'merge_files' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" {% if not uploaded %}disabled{% endif %}>Scal pliki</button>
+      </form>
+    </div>
+  </div>
+
+</body>
+</html>
