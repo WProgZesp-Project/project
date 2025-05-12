@@ -5,6 +5,28 @@ from django.shortcuts import render
 from PyPDF2 import PdfReader, PdfWriter
 import tempfile
 
+
+def remove_password_page(request):
+    return render(request, 'remove_password.html')
+
+
+def unlock_pdf_file(pdf_file, password):
+    try:
+        reader = PdfReader(pdf_file)
+        if reader.is_encrypted:
+            if not reader.decrypt(password):
+                return None, 'Incorrect password.'
+        writer = PdfWriter()
+        for page in reader.pages:
+            writer.add_page(page)
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_out:
+            writer.write(temp_out)
+            temp_out_path = temp_out.name
+        return temp_out_path, None
+    except Exception as e:
+        return None, f'Failed to process PDF: {str(e)}'
+
+
 @csrf_exempt
 @require_POST
 def remove_pdf_password(request):
@@ -12,21 +34,8 @@ def remove_pdf_password(request):
     password = request.POST.get('password')
     if not pdf_file or not password:
         return JsonResponse({'error': 'File and password are required.'}, status=400)
-    try:
-        reader = PdfReader(pdf_file)
-        if reader.is_encrypted:
-            if not reader.decrypt(password):
-                return JsonResponse({'error': 'Incorrect password.'}, status=400)
-        writer = PdfWriter()
-        for page in reader.pages:
-            writer.add_page(page)
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_out:
-            writer.write(temp_out)
-            temp_out_path = temp_out.name
-        response = FileResponse(open(temp_out_path, 'rb'), as_attachment=True, filename='unlocked.pdf')
-        return response
-    except Exception as e:
-        return JsonResponse({'error': f'Failed to process PDF: {str(e)}'}, status=400)
-
-def remove_password_page(request):
-    return render(request, 'remove_password.html')
+    temp_out_path, error = unlock_pdf_file(pdf_file, password)
+    if error:
+        return JsonResponse({'error': error}, status=400)
+    response = FileResponse(open(temp_out_path, 'rb'), as_attachment=True, filename='unlocked.pdf')
+    return response

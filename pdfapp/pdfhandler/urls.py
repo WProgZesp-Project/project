@@ -9,6 +9,6 @@ urlpatterns = [
     path('register/', UserRegistrationView.as_view(), name='register'),
     path('activate/<uidb64>/<token>', activate, name='activate'),
     path('remove-password/', remove_password_page, name='remove_password_page'),
-    path('remove-password/api/', remove_pdf_password, name='remove_pdf_password'),
+    path('api/remove-password/', remove_pdf_password, name='remove_pdf_password'),
     path('api/merge-pdfs/', merge_pdfs, name='merge_pdfs'),
 ]
