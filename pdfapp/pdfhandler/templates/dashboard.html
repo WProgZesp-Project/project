@@ -23,7 +23,7 @@
                 <span></span>
                 <span></span>
             </div>
-            <span class="username">{{ request.user.username }}</span>
+            <span class="username"></span>
         </div>
     </div>
 
@@ -51,24 +51,24 @@
 
     <div class="sidebar" id="sidebar">
         <div class="close" id="closeSidebar">&times;</div>
-        <h2>{{ request.user.first_name|default:request.user.username }}</h2>
-        <div>User: {{ request.user.username }}</div>
+        <span class="username"></span>
         <hr />
         <div>Your history</div>
-        <div class="sidebar-section" onclick="toggleSubmenu('convert')">Convert</div>
 
-        <div class="sidebar-section" onclick="toggleSubmenu('organize')">Organize</div>
+        <div class="sidebar-section" data-section="convert">Convert</div>
+        <div class="sidebar-section" data-section="organize">Organize</div>
         <div class="submenu" id="submenu-organize">
-        <a href="{% url 'merge_pdfs' %}">Merge</a>
+            <a href="{% url 'merge_pdfs' %}">Merge</a>
         </div>
+        <div class="sidebar-section" data-section="edit">Edit</div>
 
-        <div class="sidebar-section" onclick="toggleSubmenu('edit')">Edit</div>
         <hr />
         <div>Settings</div>
         <hr />
-        <div><a href="#" onclick="logout()">Sign out</a></div>
+        <div><a href="#" id="logoutLink">Sign out</a></div>
     </div>
 
-    <script src="{% static 'js/dashboard.js' %}"></script>
+    <!-- Scripts -->
+    <script src="{% static 'js/sidebar.js' %}"></script>
 </body>
 </html>
