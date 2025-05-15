@@ -3,6 +3,9 @@ from .views.index_view import index
 from .views.registration import UserRegistrationView, activate
 from .views.merge_pdf_view import merge_pdfs
 from .views.dashboard_view import dashboard
+from .views.login import UserLoginView
+from .views.logout import UserLogoutView
+
 
 urlpatterns = [
     path('', index, name='index'),
@@ -10,4 +13,7 @@ urlpatterns = [
     path('activate/<uidb64>/<token>', activate, name='activate'),
     path('api/merge-pdfs/', merge_pdfs, name='merge_pdfs'),
     path('dashboard/', dashboard, name='dashboard'),
+    path('login/', UserLoginView.as_view(), name='login'),
+    path('logout/', UserLogoutView.as_view(), name='logout'),
+    path('activate/<uidb64>/<token>', activate, name='activate')
 ]
