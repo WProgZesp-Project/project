@@ -1,0 +1,99 @@
+/* Sidebar (visible only for registered user) */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 250px;
+    height: 100%;
+    background-color: #26c5b7;
+    padding: 30px 20px;
+    box-shadow: -4px 0 10px rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+    transition: right 0.3s ease-in-out;
+    z-index: 100;
+}
+
+.sidebar.open {
+    right: 0;
+}
+
+.sidebar .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+.sidebar hr {
+    margin: 15px 0;
+    border: none;
+    border-top: 2px solid #0d004c;
+}
+
+.sidebar div {
+    margin-bottom: 10px;
+}
+
+.sidebar a {
+    color: #0d004c;
+    text-decoration: none;
+}
+
+.user-info {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 0.5em;
+    font-weight: normal;
+    cursor: pointer;
+    background-color: #3ccfcf;
+    padding: 5px 10px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 0 #0d004c;
+}
+
+.hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 20px;
+    height: 15px;
+}
+
+.hamburger span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background-color: #0d004c;
+    border-radius: 1px;
+}
+
+.username {
+    font-weight: bold;
+}
+
+.sidebar-section {
+    cursor: pointer;
+    padding: 5px 0;
+}
+
+.submenu {
+    display: none;
+    padding-left: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.submenu.open {
+    display: block;
+}
+
+.submenu a {
+    color: #0d004c;
+    text-decoration: none;
+    font-weight: normal;
+    display: block;
+    margin-bottom: 5px;
+}

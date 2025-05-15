@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF Manager</title>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/buttons.css' %}">
+    <link rel="stylesheet" href="{% static 'css/upload.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+<body>
+
+    <div class="top-bar">
+        PDF MANAGER
+        <div class="user-info" id="userInfo">
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <span class="username">{{ request.user.username }}</span>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="menu-bar">
+        <div class="menu-item">
+            Convert
+            <img src="https://img.icons8.com/ios-filled/50/swap.png" alt="Convert" />
+        </div>
+        <div class="menu-item">
+            Organize
+            <img src="https://img.icons8.com/ios-filled/50/folder-invoices.png" alt="Organize" />
+        </div>
+        <div class="menu-item">
+            Edit
+            <img src="https://img.icons8.com/ios-filled/50/edit.png" alt="Edit" />
+        </div>
+    </div>
+
+    <div class="upload-box">
+        <button class="btn btn-upload">Choose files</button>
+        <p>or drag & drop them here</p>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="close" id="closeSidebar">&times;</div>
+        <h2>{{ request.user.first_name|default:request.user.username }}</h2>
+        <div>User: {{ request.user.username }}</div>
+        <hr />
+        <div>Your history</div>
+        <div class="sidebar-section" onclick="toggleSubmenu('convert')">Convert</div>
+
+        <div class="sidebar-section" onclick="toggleSubmenu('organize')">Organize</div>
+        <div class="submenu" id="submenu-organize">
+        <a href="{% url 'merge_pdfs' %}">Merge</a>
+        </div>
+
+        <div class="sidebar-section" onclick="toggleSubmenu('edit')">Edit</div>
+        <hr />
+        <div>Settings</div>
+        <hr />
+        <div><a href="#" onclick="logout()">Sign out</a></div>
+    </div>
+
+    <script src="{% static 'js/dashboard.js' %}"></script>
+</body>
+</html>

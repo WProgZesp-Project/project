@@ -1,0 +1,10 @@
+.upload-box {
+    text-align: center;
+    position: relative;
+    top: 20vh;
+}
+
+.upload-box p {
+    font-size: 1.2em;
+    margin-top: 10px;
+}

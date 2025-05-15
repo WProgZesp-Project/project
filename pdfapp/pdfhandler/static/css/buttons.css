@@ -1,0 +1,19 @@
+/* Button styles */
+
+.btn {
+    background-color: #3ccfcf;
+    border: none;
+    padding: 20px 40px;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #0d004c;
+    box-shadow: 5px 5px 0 #0d004c;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* For further modifications (main upload button) */
+.btn-upload {
+    padding: 25px 100px;
+    font-size: 1.7em;
+}
