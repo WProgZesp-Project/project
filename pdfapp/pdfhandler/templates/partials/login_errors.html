@@ -1,0 +1,9 @@
+<div class="error" style="color:red; margin-top:.5rem;">
+  <ul>
+    {% for field, msgs in errors.items %}
+      {% for msg in msgs %}
+        <li>{{ msg }}</li>
+      {% endfor %}
+    {% endfor %}
+  </ul>
+</div>
