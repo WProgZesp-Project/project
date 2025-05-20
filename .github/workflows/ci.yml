@@ -41,6 +41,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Write SECRET_KEY to .env
+      run: echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" > .env
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
