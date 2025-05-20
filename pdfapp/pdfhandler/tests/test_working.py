@@ -12,7 +12,7 @@ class SimpleURLTestCase(SimpleTestCase):
         self.assertEqual(url, '/')
         resolver = resolve(url)
         self.assertEqual(resolver.func, index)
-        
+
         # Test merge_pdfs URL
         url = reverse('merge_pdfs')
         self.assertEqual(url, '/api/merge-pdfs/')
@@ -35,4 +35,4 @@ class MergePDFMethodTestCase(SimpleTestCase):
         factory = RequestFactory()
         request = factory.get('/api/merge-pdfs/')
         response = merge_pdfs(request)
-        self.assertEqual(response.status_code, 405)  # Method not allowed 
+        self.assertEqual(response.status_code, 405)  # Method not allowed

@@ -34,6 +34,10 @@ class UserLoginView(generics.GenericAPIView):
                         'email': user.email
                     }, status=status.HTTP_200_OK)
                 else:
-                    return Response({"error": "Account is not activated yet."}, status=status.HTTP_403_FORBIDDEN)
+                    return Response(
+                        {"error": "Account is not activated yet."},
+                        status=status.HTTP_403_FORBIDDEN)
             else:
-                return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response(
+                    {"error": "Invalid credentials."},
+                    status=status.HTTP_401_UNAUTHORIZED)
