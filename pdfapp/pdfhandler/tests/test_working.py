@@ -1,6 +1,5 @@
 from django.test import TestCase, Client
 from django.urls import reverse, resolve
-from django.utils import timezone
 from django.contrib.auth import get_user_model
 from pdfhandler.models import MergeHistory
 from pdfhandler.views.index_view import index
