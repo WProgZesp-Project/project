@@ -1,4 +1,4 @@
 from .testmodel import TestModel
-from .mergehistory import MergeHistory
+from .mergehistory import OperationHistory
 
-__all__ = ['TestModel', 'MergeHistory']
+__all__ = ['TestModel', 'OperationHistory']
