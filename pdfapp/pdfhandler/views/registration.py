@@ -16,10 +16,11 @@ from django.contrib.auth import get_user_model
 
 from .tokens import account_activation_token
 
+
 class UserRegistrationView(generics.GenericAPIView):
     serializer_class = UserRegistrationSerializer
     permission_classes = [permissions.AllowAny]
-    
+
     def _activateEmail(self, request, user):
         to_email = user.email
         mail_subject = "Activate your user account."
@@ -38,12 +39,16 @@ class UserRegistrationView(generics.GenericAPIView):
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            user  = serializer.create(request.data)
+            user = serializer.create(request.data)
             if self._activateEmail(request, user):
                 user.save()
-                return Response({"message": "User created succesfully. Verify your email"}, status=status.HTTP_201_CREATED)
-            return Response({"message": "Problem with sending verification email"}, status=status.HTTP_400_BAD_REQUEST)
-            
+                return Response(
+                    {"message": "User created succesfully. Verify your email"},
+                    status=status.HTTP_201_CREATED)
+            return Response(
+                {"message": "Problem with sending verification email"},
+                status=status.HTTP_400_BAD_REQUEST)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -52,14 +57,18 @@ def activate(request, uidb64, token):
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
-    except:
+    except BaseException:
         user = None
 
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
 
-        messages.success(request, "Thank you for your email confirmation. Now you can login your account.")
+        messages.success(
+            request,
+            "Thank you for your email confirmation. "
+            "Now you can login your account."
+        )
         return redirect('http://localhost:8000/')
     else:
         messages.error(request, "Activation link is invalid!")

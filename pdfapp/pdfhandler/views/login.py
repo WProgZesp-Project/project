@@ -1,6 +1,5 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
-from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from ..serializers.login_serializer import UserLoginSerializer
 from django.contrib.auth import get_user_model
@@ -35,7 +34,10 @@ class UserLoginView(generics.GenericAPIView):
                         'email': user.email
                     }, status=status.HTTP_200_OK)
                 else:
-                    return Response({"error": "Account is not activated yet."}, status=status.HTTP_403_FORBIDDEN)
+                    return Response(
+                        {"error": "Account is not activated yet."},
+                        status=status.HTTP_403_FORBIDDEN)
             else:
-                return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
-
+                return Response(
+                    {"error": "Invalid credentials."},
+                    status=status.HTTP_401_UNAUTHORIZED)

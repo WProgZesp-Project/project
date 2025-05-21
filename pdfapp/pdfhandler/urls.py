@@ -5,7 +5,7 @@ from .views.remove_password_view import remove_pdf_password, remove_password_pag
 from .views.merge_pdf_view import merge_pdfs
 from .views.login import UserLoginView
 from .views.logout import UserLogoutView
-
+from .views.merge_pdf_view import merge_pdfs
 
 urlpatterns = [
     path('', index, name='index'),
