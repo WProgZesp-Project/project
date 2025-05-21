@@ -9,6 +9,7 @@ from ..serializers.login_serializer import UserLoginSerializer
 
 User = get_user_model()
 
+
 class UserLoginView(generics.GenericAPIView):
     serializer_class = UserLoginSerializer
     permission_classes = [permissions.AllowAny]

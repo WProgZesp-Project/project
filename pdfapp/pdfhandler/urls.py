@@ -12,7 +12,7 @@ urlpatterns = [
     path('register/', UserRegistrationView.as_view(), name='register'),
     path(
         'register/success/',
-        RegistrationSuccessView.as_view(), 
+        RegistrationSuccessView.as_view(),
         name='registration_success'
     ),
     path('activate/<uidb64>/<token>', activate, name='activate'),

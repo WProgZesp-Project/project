@@ -26,7 +26,7 @@ class UserRegistrationView(generics.GenericAPIView):
     def _activateEmail(self, request, user):
         if os.getenv("TEST") == "true":
             return True
-        
+
         to_email = user.email
         mail_subject = "Activate your user account."
         protocol = 'https' if request.is_secure() else 'http'
@@ -51,9 +51,11 @@ class UserRegistrationView(generics.GenericAPIView):
                     if os.getenv("TEST") == "true":
                         user.is_active = True
                         user.save()
-                    # Create response and set header separately (older Django compatibility)
+                    # Create response and set header separately (older Django
+                    # compatibility)
                     response = HttpResponse(status=200)
-                    response['HX-Redirect'] = f"/register/success/?email={user.email}"
+                    response['HX-Redirect'] = f"/register/success/?email={
+                        user.email}"
                     return response
                 return Response(
                     {"message": "User created successfully. Verify your email"},
@@ -61,7 +63,7 @@ class UserRegistrationView(generics.GenericAPIView):
             return Response(
                 {"message": "Problem with sending verification email"},
                 status=status.HTTP_400_BAD_REQUEST)
-        
+
         errors = serializer.errors
         if request.headers.get('Hx-Request'):
             return render(
@@ -73,7 +75,6 @@ class UserRegistrationView(generics.GenericAPIView):
         return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-    
 class RegistrationSuccessView(View):
     def get(self, request):
         email = request.GET.get('email', '')
