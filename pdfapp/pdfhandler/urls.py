@@ -4,7 +4,6 @@ from .views.registration import UserRegistrationView, activate
 from .views.login import UserLoginView
 from .views.logout import UserLogoutView
 from .views.merge_pdf_view import merge_pdfs
-from .views.merge_pdf_view import merge_pdfs
 from .views.extract_pdf_view import ExtractPagesView
 
 urlpatterns = [
