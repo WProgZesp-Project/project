@@ -46,9 +46,9 @@ class ExtractPagesView(generics.GenericAPIView):
                     status=400
                 )
 
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_out:
-            pdf_writer.write(temp_out)
-            temp_out_path = temp_out.name
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp:
+            pdf_writer.write(temp)
+            temp_out_path = temp.name
 
         response = FileResponse(
             open(temp_out_path, 'rb'),
