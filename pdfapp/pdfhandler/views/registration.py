@@ -54,8 +54,7 @@ class UserRegistrationView(generics.GenericAPIView):
                     # Create response and set header separately (older Django
                     # compatibility)
                     response = HttpResponse(status=200)
-                    response['HX-Redirect'] = f"/register/success/?email={
-                        user.email}"
+                    response['HX-Redirect'] = f"/register/success/?email={user.email}"
                     return response
                 return Response(
                     {"message": "User created successfully. Verify your email"},

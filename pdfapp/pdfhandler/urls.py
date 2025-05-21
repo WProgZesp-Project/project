@@ -1,7 +1,11 @@
 from django.urls import path
 from .views.index_view import index
-from .views.registration import UserRegistrationView, RegistrationSuccessView, activate
-from .views.remove_password_view import remove_pdf_password, remove_password_page
+from .views.registration import (
+    UserRegistrationView, RegistrationSuccessView, activate
+)
+from .views.remove_password_view import (
+    remove_pdf_password, remove_password_page
+)
 from .views.merge_pdf_view import merge_pdfs
 from .views.login import UserLoginView
 from .views.logout import UserLogoutView
