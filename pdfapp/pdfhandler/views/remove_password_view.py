@@ -33,9 +33,15 @@ def remove_pdf_password(request):
     pdf_file = request.FILES.get('file')
     password = request.POST.get('password')
     if not pdf_file or not password:
-        return JsonResponse({'error': 'File and password are required.'}, status=400)
+        return JsonResponse(
+            {'error': 'File and password are required.'}, status=400)
     temp_out_path, error = unlock_pdf_file(pdf_file, password)
     if error:
         return JsonResponse({'error': error}, status=400)
-    response = FileResponse(open(temp_out_path, 'rb'), as_attachment=True, filename='unlocked.pdf')
+    response = FileResponse(
+        open(
+            temp_out_path,
+            'rb'),
+        as_attachment=True,
+        filename='unlocked.pdf')
     return response
