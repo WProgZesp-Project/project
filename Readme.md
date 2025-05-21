@@ -67,3 +67,14 @@ TEST=true
 ```
 
 Po uruchomieniu aplikacja będzie dostępna pod adresem http://127.0.0.1:8000/.
+
+
+## Endpoints
+
+### Frontend
+`/remove-password`
+
+### Backend
+`/api/merge-pdfs `- endpoint do mergowania plików pdf  
+`/api/remove-password` - endpoint do usuwania hasła dla pliku pdf   
+
