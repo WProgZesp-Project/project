@@ -19,6 +19,9 @@ class UserRegistrationView(generics.GenericAPIView):
     serializer_class = UserRegistrationSerializer
     permission_classes = [permissions.AllowAny]
 
+    def get(self, request):
+        return render(request, 'registration.html')
+
     def _activateEmail(self, request, user):
         to_email = user.email
         mail_subject = "Activate your user account."
@@ -48,6 +51,11 @@ class UserRegistrationView(generics.GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class RegistrationSuccessView(View):
+    def get(self, request):
+        email = request.GET.get('email', '')
+        return render(request, 'registration_success.html', {'email': email})
 
 
 def activate(request, uidb64, token):
