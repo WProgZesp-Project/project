@@ -1,0 +1,19 @@
+# .flake8
+[flake8]
+max-line-length = 80
+exclude =
+    .git,
+    .github,
+    __pycache__,
+    */migrations/*,
+    .venv,
+    venv,
+    env,
+    .pytest_cache,
+    */staticfiles/*,
+    */settings/*,
+    docs/
+per-file-ignores =
+    __init__.py:F401,F403
+    tests/*.py:E501
+max-complexity = 10

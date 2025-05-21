@@ -5,7 +5,6 @@ from .views.login import UserLoginView
 from .views.logout import UserLogoutView
 from .views.merge_pdf_view import merge_pdfs
 
-
 urlpatterns = [
     path('', index, name='index'),
     path('register/', UserRegistrationView.as_view(), name='register'),

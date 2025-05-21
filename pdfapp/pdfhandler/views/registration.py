@@ -14,15 +14,10 @@ from django.contrib.auth import get_user_model
 
 from .tokens import account_activation_token
 
-User = get_user_model()
-
 
 class UserRegistrationView(generics.GenericAPIView):
     serializer_class = UserRegistrationSerializer
     permission_classes = [permissions.AllowAny]
-
-    def get(self, request):
-        return render(request, 'registration.html')
 
     def _activateEmail(self, request, user):
         to_email = user.email
@@ -42,55 +37,38 @@ class UserRegistrationView(generics.GenericAPIView):
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            user = serializer.create(serializer.validated_data)
-            sent = self._activateEmail(request, user)
-            if sent:
+            user = serializer.create(request.data)
+            if self._activateEmail(request, user):
                 user.save()
-                # HTMX: redirect to success page, passing email as query-param
-                if request.headers.get('Hx-Request'):
-                    return HttpResponse(
-                        status=200,
-                        headers={'HX-Redirect': f"/register/success/?email={user.email}"}
-                    )
-                return redirect('registration_success') + f"?email={user.email}"
+                return Response(
+                    {"message": "User created succesfully. Verify your email"},
+                    status=status.HTTP_201_CREATED)
             return Response(
                 {"message": "Problem with sending verification email"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+                status=status.HTTP_400_BAD_REQUEST)
 
-        errors = serializer.errors
-        if request.headers.get('Hx-Request'):
-            return render(
-                request,
-                'partials/registration_errors.html',
-                {'errors': errors},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        return render(request, 'registration.html', {'errors': errors})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-class RegistrationSuccessView(View):
-    def get(self, request):
-        email = request.GET.get('email', '')
-        return render(request, 'registration_success.html', {'email': email})
 
 def activate(request, uidb64, token):
     UserModel = get_user_model()
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
-        user = UserModel.objects.get(pk=uid)
-    except Exception:
+        user = User.objects.get(pk=uid)
+    except BaseException:
         user = None
 
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
+
         messages.success(
             request,
-            "Thank you for confirming your email. You can now log in."
+            "Thank you for your email confirmation. "
+            "Now you can login your account."
         )
+        return redirect('http://localhost:8000/')
     else:
         messages.error(request, "Activation link is invalid!")
 
-    # redirect to home (which will show login form or index as desired)
-    return redirect('/')
+    return redirect('http://localhost:8000/')

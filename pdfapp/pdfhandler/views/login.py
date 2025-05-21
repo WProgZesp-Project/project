@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
-from django.contrib.auth import get_user_model
+from rest_framework.authtoken.models import Token
 from ..serializers.login_serializer import UserLoginSerializer
 
 User = get_user_model()
@@ -31,27 +31,10 @@ class UserLoginView(generics.GenericAPIView):
                     error = "Account is not activated yet."
                     status_code = status.HTTP_403_FORBIDDEN
                 else:
-                    # successful login → HTMX redirect
-                    if request.headers.get('Hx-Request'):
-                        return HttpResponse(
-                            status=200,
-                            headers={'HX-Redirect': '/'}
-                        )
-                    return redirect('index')
+                    return Response(
+                        {"error": "Account is not activated yet."},
+                        status=status.HTTP_403_FORBIDDEN)
             else:
-                error = "Invalid credentials."
-                status_code = status.HTTP_401_UNAUTHORIZED
-        else:
-            error = "Invalid credentials."
-            status_code = status.HTTP_401_UNAUTHORIZED
-
-        # failure: return HTML fragment with error
-        if request.headers.get('Hx-Request'):
-            return render(
-                request,
-                'partials/login_errors.html',
-                {'error': error},
-                status=status_code
-            )
-        # non-HTMX fallback
-        return render(request, 'login.html', {'error': error})
+                return Response(
+                    {"error": "Invalid credentials."},
+                    status=status.HTTP_401_UNAUTHORIZED)
