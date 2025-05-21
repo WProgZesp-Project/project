@@ -67,3 +67,13 @@ TEST=true
 ```
 
 Po uruchomieniu aplikacja będzie dostępna pod adresem http://127.0.0.1:8000/.
+
+
+### 9. Ekstrakcja stron
+Estrakcja wybranych stron z pliku pdf
+
+url: `api/extract-pages`
+
+method: POST
+
+body: file: plik, pages: strony, np. 1,3,5-7,9

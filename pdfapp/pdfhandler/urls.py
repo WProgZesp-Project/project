@@ -4,6 +4,7 @@ from .views.registration import UserRegistrationView, activate
 from .views.login import UserLoginView
 from .views.logout import UserLogoutView
 from .views.merge_pdf_view import merge_pdfs
+from .views.extract_pdf_view import ExtractPagesView
 
 urlpatterns = [
     path('', index, name='index'),
@@ -12,4 +13,5 @@ urlpatterns = [
     path('logout/', UserLogoutView.as_view(), name='logout'),
     path('activate/<uidb64>/<token>', activate, name='activate'),
     path('api/merge-pdfs/', merge_pdfs, name='merge_pdfs'),
+    path('api/extract-pages', ExtractPagesView.as_view(), name='extract-pages')
 ]
