@@ -19,12 +19,15 @@ def unlock_pdf_file(pdf_file, password):
         writer = PdfWriter()
         for page in reader.pages:
             writer.add_page(page)
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_out:
+        with tempfile.NamedTemporaryFile(
+            delete=False, suffix='.pdf'
+        ) as temp_out:
             writer.write(temp_out)
             temp_out_path = temp_out.name
         return temp_out_path, None
     except Exception as e:
-        return None, f'Failed to process PDF: {str(e)}'
+        msg = 'Failed to process PDF: {0}'.format(str(e))
+        return None, msg
 
 
 @csrf_exempt
