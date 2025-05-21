@@ -30,12 +30,12 @@ class UserLoginView(generics.GenericAPIView):
 
             if user and user.check_password(password):
                 if not user.is_active:
-                    error = "Account is not activated yet."
-                    status_code = status.HTTP_403_FORBIDDEN
-                else:
                     return Response(
                         {"error": "Account is not activated yet."},
-                        status=status.HTTP_403_FORBIDDEN)
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+                else:
+                    return HttpResponse(status=200)
             else:
                 return Response(
                     {"error": "Invalid credentials."},

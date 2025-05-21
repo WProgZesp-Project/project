@@ -71,6 +71,8 @@ class UserRegistrationView(generics.GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+
     
 class RegistrationSuccessView(View):
     def get(self, request):
@@ -82,8 +84,9 @@ def activate(request, uidb64, token):
     UserModel = get_user_model()
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except BaseException:
+        # Fix: Use UserModel instead of User
+        user = UserModel.objects.get(pk=uid)
+    except Exception:  # Changed from BaseException for better practice
         user = None
 
     if user is not None and account_activation_token.check_token(user, token):
