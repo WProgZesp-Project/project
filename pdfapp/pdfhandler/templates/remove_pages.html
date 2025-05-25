@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Remove pages from PDF file</title>
+    <style>
+    body {
+      font-family: sans-serif;
+      background: #90B8D6;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 500px;
+      margin: 5% auto;
+      padding: 1rem;
+    }
+    .form-box {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h4 {
+      color: #639EE;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    label {
+      display: block;
+      margin: 1rem 0 0.4rem;
+      font-weight: bold;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .custom-file-label {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background: #85DECB;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+      margin-bottom: 1rem;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .custom-file-label:hover {
+      background: #78cbb0;
+      transform: translateY(-1px);
+    }
+
+    .filename {
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #88CFA8;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 0.75rem;
+      background: #85DECB;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    button:hover {
+      background: #78cbb0;
+      transform: translateY(-1px);
+    }
+
+    .error {
+      color: red;
+      margin-top: 0.5rem;
+    }
+
+    #remove-pages-result {
+      margin-top: 1rem;
+      text-align: center;
+      font-weight: bold;
+    }
+    </style>
+</head>
+<body>
+  <div class="container">
+    <div class="form-box">
+      <h4>Remove pages from PDF file</h4>
+      <form id="remove-pages-form" enctype="multipart/form-data" method="post">
+          <label class="custom-file-label" for="file">Choose PDF file</label>
+          <input type="file" name="file" id="file" accept="application/pdf" required>
+          <div class="filename" id="filename"></div>
+
+          <label for="pages">Pages (comma separated):</label>
+          <input type="text" name="pages" id="pages" required>
+
+          <button type="submit">Remove pages</button>
+      </form>
+      <div id="remove-pages-result"></div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('file').addEventListener('change', function() {
+        const filenameDisplay = document.getElementById('filename');
+        filenameDisplay.textContent = this.files.length ? this.files[0].name : '';
+    });
+
+    document.getElementById('remove-pages-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        const resultDiv = document.getElementById('remove-pages-result');
+        resultDiv.textContent = '';
+        try {
+            const response = await fetch('/remove-pages/api/', {
+                method: 'POST',
+                body: formData
+            });
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'removed-pages.pdf';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+                resultDiv.textContent = 'Pages were removed.';
+            } else {
+                const data = await response.json();
+                resultDiv.textContent = data.error || 'An error occurred.';
+            }
+        } catch (err) {
+            resultDiv.textContent = 'Connection error.';
+        }
+    });
+  </script>
+</body>
+</html>
