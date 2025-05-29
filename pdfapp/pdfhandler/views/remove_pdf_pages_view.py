@@ -51,7 +51,7 @@ def remove_pdf_pages(request):
 
         if len(writer.pages) < 1:
             return JsonResponse(
-                {'error': 'Cannot remove all pages from the PDF.'}, status=400)
+                {'error': 'Cannot remove all pages from the PDF file.'}, status=400)
 
         with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_out:
             writer.write(temp_out)
