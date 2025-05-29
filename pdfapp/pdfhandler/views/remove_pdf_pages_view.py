@@ -5,6 +5,7 @@ from PyPDF2 import PdfReader, PdfWriter
 from django.shortcuts import render
 import tempfile
 
+
 def remove_pdf_pages_view(request):
     return render(request, 'remove_pages.html')
 
