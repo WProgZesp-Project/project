@@ -77,4 +77,5 @@ Po uruchomieniu aplikacja będzie dostępna pod adresem http://127.0.0.1:8000/.
 ### Backend
 `/api/merge-pdfs `- endpoint do mergowania plików pdf  
 `/api/remove-password` - endpoint do usuwania hasła dla pliku pdf   
+`/api/remove-pages` - endpoint do usuwania stron z pliku pdf   
 
