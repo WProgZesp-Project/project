@@ -1,19 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-        window.location.href = "/";
-        return;
-    }
-
-    // Get username
-    const username = localStorage.getItem("authUsername");
-    if (username) {
-        const usernameSpan = document.querySelector(".username");
-        if (usernameSpan) {
-            usernameSpan.textContent = username;
-        }
-    }
-
     // Sidebar toggle
     document.getElementById("userInfo")?.addEventListener("click", function () {
         document.getElementById("sidebar")?.classList.add("open");
@@ -38,11 +23,10 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch("/logout/", {
             method: "POST",
             headers: {
-                "Authorization": "Token " + token,
                 "Content-Type": "application/json"
             }
         }).then(() => {
-            localStorage.removeItem("authToken");
+            document.cookie = "auth_token=; Max-Age=0; path=/";
             window.location.href = "/";
         });
     });

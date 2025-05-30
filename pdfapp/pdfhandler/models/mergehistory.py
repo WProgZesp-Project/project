@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
+
 class MergeHistory(models.Model):
     timestamp = models.DateTimeField(default=timezone.now)
     filenames = models.TextField()  # Comma-separated list of filenames
