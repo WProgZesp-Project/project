@@ -6,10 +6,12 @@
     right: -300px;
     width: 250px;
     height: 100%;
-    background-color: #26c5b7;
+    background-color: #85DECB;
     padding: 30px 20px;
     box-shadow: -4px 0 10px rgba(0, 0, 0, 0.2);
     font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+    color: #0d1215;
     transition: right 0.3s ease-in-out;
     z-index: 100;
 }
@@ -24,12 +26,13 @@
     right: 15px;
     font-size: 1.5em;
     cursor: pointer;
+    color: #0d1215;
 }
 
 .sidebar hr {
     margin: 15px 0;
     border: none;
-    border-top: 2px solid #0d004c;
+    border-top: 2px solid #0d1215;
 }
 
 .sidebar div {
@@ -37,7 +40,7 @@
 }
 
 .sidebar a {
-    color: #0d004c;
+    color: #0d1215;
     text-decoration: none;
 }
 
@@ -45,13 +48,15 @@
     position: absolute;
     top: 20px;
     right: 30px;
-    font-size: 0.5em;
-    font-weight: normal;
+    font-size: 0.9em;
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
     cursor: pointer;
-    background-color: #3ccfcf;
-    padding: 5px 10px;
+    background-color: #85DECB;
+    color: white;
+    padding: 6px 12px;
     border-radius: 8px;
-    box-shadow: 2px 2px 0 #0d004c;
+    box-shadow: 2px 2px 0 #0d1215;
 }
 
 .hamburger {
@@ -66,12 +71,13 @@
     display: block;
     height: 2px;
     width: 100%;
-    background-color: #0d004c;
+    background-color: #fff;
     border-radius: 1px;
 }
 
 .username {
     font-weight: bold;
+    color: #0d1215;
 }
 
 .sidebar-section {
@@ -91,7 +97,7 @@
 }
 
 .submenu a {
-    color: #0d004c;
+    color: #0d1215;
     text-decoration: none;
     font-weight: normal;
     display: block;

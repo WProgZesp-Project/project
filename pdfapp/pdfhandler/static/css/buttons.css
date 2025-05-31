@@ -1,19 +1,26 @@
 /* Button styles */
 
 .btn {
-    background-color: #3ccfcf;
+    background-color: #85DECB;
     border: none;
     padding: 20px 40px;
     font-size: 1.5em;
     font-weight: bold;
-    color: #0d004c;
-    box-shadow: 5px 5px 0 #0d004c;
+    font-family: 'Montserrat', sans-serif;
+    color: #0d1215;
+    box-shadow: 5px 5px 0 #6395EE;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 8px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn:hover {
+    background-color: #78cbb0;
+    transform: translateY(-2px);
 }
 
 /* For further modifications (main upload button) */
 .btn-upload {
-    padding: 25px 100px;
-    font-size: 1.7em;
+    padding: 30px 125px;
+    font-size: 2em;
 }
