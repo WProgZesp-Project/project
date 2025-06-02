@@ -13,6 +13,7 @@ from .views.merge_pdf_view import merge_pdfs
 from .views.login import UserLoginView
 from .views.logout import UserLogoutView
 
+from .views.extract_pdf_view import ExtractPagesView
 
 urlpatterns = [
     path('', index, name='index'),
@@ -38,4 +39,5 @@ urlpatterns = [
     path('login/', UserLoginView.as_view(), name='login'),
     path('logout/', UserLogoutView.as_view(), name='logout'),
     path('api/merge-pdfs/', merge_pdfs, name='merge_pdfs'),
+    path('api/extract-pages', ExtractPagesView.as_view(), name='extract-pages')
 ]
