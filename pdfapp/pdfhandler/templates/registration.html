@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up | PDFApp</title>
+  <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #90B8D6;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    .register {
+      background: #fff;
+      max-width: 400px;
+      margin: 5% auto;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .register h2 {
+      color: #639EE;
+      text-align: center;
+    }
+    .register label {
+      display: block;
+      margin: .5rem 0 .2rem;
+    }
+    .register input {
+      width: 100%;
+      padding: .5rem;
+      border: 1px solid #88CFA8;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .register button {
+      margin-top: 1rem;
+      width: 100%;
+      padding: .6rem;
+      background: #85DECB;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+    }
+    .register button:hover {
+      background: #78cbb0;
+      transform: translateY(-1px);
+    }
+    /* new styles for the log-in link */
+    .login-text {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 1.1rem;
+      color: #333;
+    }
+    .login-text .login-link {
+      display: inline-block;
+      margin-left: .5rem;
+      padding: .6rem 1rem;
+      background: #85DECB;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+    }
+    .login-text .login-link:hover {
+      background: #78cbb0;
+      transform: translateY(-1px);
+    }
+    .error {
+      color: red;
+      margin-top: .5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="register">
+    <h2>Sign Up</h2>
+    <div id="registration-error">
+      {% if errors %}
+        <ul class="error">
+          {% for field, msgs in errors.items %}
+            {% for msg in msgs %}
+              <li>{{ msg }}</li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+    <form
+      hx-post="{% url 'register' %}"
+      hx-target="#registration-error"
+      hx-swap="innerHTML">
+      <label for="id_username">Username</label>
+      <input type="text" id="id_username" name="username" required>
+      <label for="id_email">Email</label>
+      <input type="email" id="id_email" name="email" required>
+      <label for="id_password">Password</label>
+      <input type="password" id="id_password" name="password" required>
+      <label for="id_password2">Confirm Password</label>
+      <input type="password" id="id_password2" name="password2" required>
+      <button type="submit">Create Account</button>
+    </form>
+    <p class="login-text">
+      Already have an account?
+      <a class="login-link" href="{% url 'login' %}">Log in</a>
+    </p>
+  </div>
+</body>
+</html>

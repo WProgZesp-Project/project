@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Check Your Email | PDFApp</title>
+  <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+  <style>
+    body { font-family:sans-serif; background:#90B8D6; color:#333; }
+    .notice { background:#fff; max-width:400px; margin:5% auto; padding:2rem;
+              border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+    .notice h2 { color:#639EE; text-align:center; }
+    .notice p { margin:1rem 0; }
+    .notice a.login-button {
+      display: block;
+      margin-top: 1rem;
+      width: 100%;
+      padding: .6rem;
+      background: #85DECB;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: background .2s, transform .1s;
+      box-sizing: border-box;
+    }
+    .notice a.login-button:hover {
+      background: #78cbb0;
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+  <div class="notice">
+    <h2>Almost There!</h2>
+    <p>We've sent a confirmation link to:</p>
+    <p><strong>{{ email }}</strong></p>
+    <p>Please check your inbox and click the link to activate your account.</p>
+    
+    <!-- Replace HTMX button with regular link styled as a button -->
+    <a href="{% url 'login' %}" class="login-button">
+      Go to Log In
+    </a>
+  </div>
+</body>
+</html>

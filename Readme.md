@@ -77,3 +77,22 @@ url: `api/extract-pages`
 method: POST
 
 body: file: plik, pages: strony, np. 1,3,5-7,9
+## Endpoints
+
+### Frontend
+`/remove-password`
+
+### Backend
+`/api/merge-pdfs `- endpoint do mergowania plików pdf  
+`/api/remove-password` - endpoint do usuwania hasła dla pliku pdf   
+
+
+
+### 9. Ekstrakcja stron
+Estrakcja wybranych stron z pliku pdf
+
+url: `api/extract-pages`
+
+method: POST
+
+body: file: plik, pages: strony, np. 1,3,5-7,9
