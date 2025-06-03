@@ -1,5 +1,5 @@
 from .testmodel import TestModel
-from .mergehistory import OperationHistory
+from .operationhistory import OperationHistory, OperationType
 
 __all__ = ['TestModel', 'OperationHistory']
 

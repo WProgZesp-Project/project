@@ -5,7 +5,8 @@ from rest_framework import (
 from django.http import JsonResponse, FileResponse
 from django.shortcuts import render
 from PyPDF2 import PdfReader, PdfWriter
-import tempfile
+from ..models import OperationHistory, OperationType
+import tempfile, os
 
 
 class ExtractPagesView(generics.GenericAPIView):
@@ -49,6 +50,14 @@ class ExtractPagesView(generics.GenericAPIView):
         with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp:
             pdf_writer.write(temp)
             temp_out_path = temp.name
+
+        if request.user.is_authenticated:
+            OperationHistory.objects.create(
+                user=request.user,
+                operation_type=OperationType.EXTRACT,
+                input_filenames=[pdf_file.name],
+                result_filename=os.path.basename(temp_out_path)
+            )
 
         response = FileResponse(
             open(temp_out_path, 'rb'),

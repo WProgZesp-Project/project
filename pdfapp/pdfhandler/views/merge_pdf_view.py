@@ -37,7 +37,7 @@ def merge_pdfs(request):
     # Save history if user is logged in
     if request.user.is_authenticated:
         OperationHistory.objects.create(
-            user = request.user,
+            user=request.user,
             operation_type=OperationType.MERGE,
             input_filenames=filenames,
             result_filename=merged_filename

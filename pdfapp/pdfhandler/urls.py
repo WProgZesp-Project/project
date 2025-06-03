@@ -1,6 +1,5 @@
 from django.urls import path
 from .views.index_view import index
-from .views.registration import UserRegistrationView, activate
 from .views.registration import (
     UserRegistrationView, RegistrationSuccessView, activate
 )
@@ -42,6 +41,6 @@ urlpatterns = [
     path('logout/', UserLogoutView.as_view(), name='logout'),
     path('api/merge-pdfs/', merge_pdfs, name='merge_pdfs'),
     path('api/extract-pages', ExtractPagesView.as_view(), name='extract-pages'),
-  path('history/', history_page, name='history'),
+    path('history/', history_page, name='history'),
     path('history/fragment/', history_fragment, name='history_fragment')
 ]

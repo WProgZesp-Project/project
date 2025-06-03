@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
-from django.contrib.auth import get_user_model  # Add this line
+from django.contrib.auth import get_user_model, login, authenticate  # Add this line
 from ..serializers.login_serializer import UserLoginSerializer
 
 
@@ -28,15 +28,16 @@ class UserLoginView(generics.GenericAPIView):
             except User.DoesNotExist:
                 user = None
 
-            if user and user.check_password(password):
+            if user is not None:
                 if not user.is_active:
                     return Response(
                         {"error": "Account is not activated yet."},
                         status=status.HTTP_403_FORBIDDEN
                     )
-                else:
-                    return HttpResponse(status=200)
+                login(request, user)
+                return HttpResponse(status=200)
             else:
                 return Response(
                     {"error": "Invalid credentials."},
-                    status=status.HTTP_401_UNAUTHORIZED)
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
