@@ -6,13 +6,16 @@ from ..models import OperationHistory, OperationType
 import tempfile
 import os
 
+
 @csrf_exempt
 @require_POST
 def merge_pdfs(request):
     files = request.FILES.getlist('files')
     order = request.POST.getlist('order')  # List of indices as strings
     if not files or not order or len(files) != len(order):
-        return JsonResponse({'error': 'Files and order are required and must match.'}, status=400)
+        return JsonResponse(
+            {'error': 'Files and order are required and must match.'},
+            status=400)
 
     # Reorder files according to user-specified order
     try:
@@ -40,5 +43,10 @@ def merge_pdfs(request):
             result_filename=merged_filename
         )
 
-    response = FileResponse(open(temp_out_path, 'rb'), as_attachment=True, filename='merged.pdf')
+    response = FileResponse(
+        open(
+            temp_out_path,
+            'rb'),
+        as_attachment=True,
+        filename='merged.pdf')
     return response
