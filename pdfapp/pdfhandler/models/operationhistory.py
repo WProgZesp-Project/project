@@ -19,4 +19,3 @@ class OperationHistory(models.Model):
 
     def __str__(self):
         return f"Merged: {self.input_filenames} at {self.created_at}"
-    
