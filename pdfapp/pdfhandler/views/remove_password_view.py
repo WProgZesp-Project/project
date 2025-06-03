@@ -3,8 +3,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.shortcuts import render
 from PyPDF2 import PdfReader, PdfWriter
-import tempfile, os
 from ..models import OperationHistory, OperationType
+import tempfile
+import os
+
 
 def remove_password_page(request):
     return render(request, 'remove_password.html')
@@ -43,7 +45,7 @@ def remove_pdf_password(request):
 
     if error:
         return JsonResponse({'error': error}, status=400)
-    
+
     if request.user.is_authenticated:
         OperationHistory.objects.create(
             user=request.user,

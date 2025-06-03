@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
-from django.contrib.auth import get_user_model, login, authenticate  # Add this line
+from django.contrib.auth import get_user_model, login  # Add this line
 from ..serializers.login_serializer import UserLoginSerializer
 
 
@@ -21,7 +21,6 @@ class UserLoginView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data['email']
-            password = serializer.validated_data['password']
 
             try:
                 user = User.objects.get(email=email)

@@ -6,7 +6,8 @@ from django.http import JsonResponse, FileResponse
 from django.shortcuts import render
 from PyPDF2 import PdfReader, PdfWriter
 from ..models import OperationHistory, OperationType
-import tempfile, os
+import tempfile
+import os
 
 
 class ExtractPagesView(generics.GenericAPIView):

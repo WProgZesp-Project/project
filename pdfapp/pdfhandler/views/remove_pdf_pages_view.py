@@ -3,8 +3,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from PyPDF2 import PdfReader, PdfWriter
 from django.shortcuts import render
-import tempfile, os
 from ..models import OperationHistory, OperationType
+import tempfile
+import os
+
 
 def remove_pdf_pages_view(request):
     return render(request, 'remove_pages.html')
