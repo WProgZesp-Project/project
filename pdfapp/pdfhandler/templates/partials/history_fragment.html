@@ -1,0 +1,32 @@
+{% if operations %}
+  <table>
+    <thead>
+      <tr>
+        <th>Typ</th>
+        <th>Pliki wejściowe</th>
+        <th>Data</th>
+        <th>Pobierz</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for op in operations %}
+      <tr>
+        <td>{{ op.get_operation_type_display }}</td>
+        <td>
+          {% for file in op.input_filenames %}
+            {{ file }}{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        </td>
+        <td>{{ op.created_at|date:"Y-m-d H:i" }}</td>
+        <td>
+          <a href="/media/{{ op.result_filename }}" class="download-link" download title="Pobierz">
+            📥
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="no-history">Brak operacji do wyświetlenia.</div>
+{% endif %}

@@ -3,7 +3,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from PyPDF2 import PdfReader, PdfWriter
 from django.shortcuts import render
+from ..models import OperationHistory, OperationType
 import tempfile
+import os
 
 
 def remove_pdf_pages_view(request):
@@ -54,6 +56,14 @@ def remove_pdf_pages(request):
         with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_out:
             writer.write(temp_out)
             temp_out_path = temp_out.name
+
+        if request.user.is_authenticated:
+            OperationHistory.objects.create(
+                user=request.user,
+                operation_type=OperationType.REMOVE_PAGES,
+                input_filenames=[pdf_file.name],
+                result_filename=os.path.basename(temp_out_path)
+            )
 
         return FileResponse(
             open(
