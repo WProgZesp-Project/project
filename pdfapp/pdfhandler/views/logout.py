@@ -13,5 +13,6 @@ class UserLogoutView(APIView):
         except (AttributeError, Token.DoesNotExist):
             pass
 
-        return Response({"message": "Logged out successfully."},
-                        status=status.HTTP_200_OK)
+        response = Response({"message": "Logged out"}, status=status.HTTP_200_OK)
+        response.delete_cookie('auth_token', path='/')
+        return response

@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model  # Add this line
 from ..serializers.login_serializer import UserLoginSerializer
 
@@ -35,7 +36,10 @@ class UserLoginView(generics.GenericAPIView):
                         status=status.HTTP_403_FORBIDDEN
                     )
                 else:
-                    return HttpResponse(status=200)
+                    token, _ = Token.objects.get_or_create(user=user)
+                    response = HttpResponse(status=200)
+                    response.set_cookie('auth_token', token.key, httponly=True, path='/')
+                    return response
             else:
                 return Response(
                     {"error": "Invalid credentials."},

@@ -17,14 +17,21 @@
 
     <div class="top-bar">
         <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo">
-        <div class="user-info" id="userInfo">
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
+    
+        {% if authenticated %}
+            <div class="user-info" id="userInfo">
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </div>
-            <span class="username"></span>
-        </div>
+        {% else %}
+            <div class="auth-buttons">
+                <a href="{% url 'login' %}" class="btn btn-auth">Login</a>
+                <a href="{% url 'register' %}" class="btn btn-auth">Register</a>
+            </div>
+        {% endif %}
     </div>
 
     <div class="divider"></div>
@@ -72,6 +79,9 @@
     </div>
 
     <!-- Scripts -->
+    <script>
+        window.username = {{ username|safe }};
+    </script>
     <script src="{% static 'js/sidebar.js' %}"></script>
 </body>
 </html>

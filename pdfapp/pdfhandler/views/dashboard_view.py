@@ -1,10 +1,18 @@
 from rest_framework.views import APIView
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import render
-# from rest_framework.permissions import IsAuthenticated
-
+from django.utils.safestring import mark_safe
+import json
 
 class DashboardView(APIView):
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = []
 
     def get(self, request):
-        return render(request, 'dashboard.html')
+        user = request.user
+        if user.is_authenticated:
+            username = mark_safe(json.dumps(user.username))
+            return render(request, 'dashboard.html', {'username': username, 'authenticated': True})
+        else:
+            return render(request, 'dashboard.html', {'authenticated': False})

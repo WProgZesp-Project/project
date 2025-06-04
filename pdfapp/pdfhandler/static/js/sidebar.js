@@ -1,4 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".username").forEach(el => {
+        el.textContent = window.username;
+    });
+    
     // Sidebar toggle
     document.getElementById("userInfo")?.addEventListener("click", function () {
         document.getElementById("sidebar")?.classList.add("open");
