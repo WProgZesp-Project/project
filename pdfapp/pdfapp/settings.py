@@ -28,6 +28,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Application definition
 
@@ -39,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'pdfhandler', 
+    'pdfhandler',
 ]
 
 MIDDLEWARE = [
@@ -135,3 +137,4 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_SSL_CERTFILE = None
 EMAIL_SSL_KEYFILE = None
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
