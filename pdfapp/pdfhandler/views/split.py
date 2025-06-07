@@ -75,8 +75,11 @@ class SplitPDFView(APIView):
                     f.write(output_stream.read())
 
                 file_url = f"{settings.MEDIA_URL}{filename}"
-                download_links.append(f'<div class="download-btn"><a href="{file_url}" download class="btn">Download {filename}</a></div>')
-
+                download_links.append(
+                    f'<div class="download-btn">'
+                    f'<a href="{file_url}" download class="btn">'
+                    f'Download {filename}</a></div>'
+                )
 
             # Handle the rest of the pages
 
@@ -97,11 +100,13 @@ class SplitPDFView(APIView):
 
                 rest_file_url = f"{settings.MEDIA_URL}{rest_filename}"
                 download_links.append(
-                    f'<div class="download-btn"><a href="{rest_file_url}" download class="btn">Download split_rest.pdf</a></div>')
-
+                    f'<div class="download-btn">'
+                    f'<a href="{rest_file_url}" download class="btn">'
+                    f'Download split_rest.pdf</a></div>'
+                )
             return HttpResponse('''
                 <p style="font-weight:bold;">Your PDF has been split successfully!</p>
                 {}
             '''.format('<br>'.join(download_links)))
-        
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
