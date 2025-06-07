@@ -67,3 +67,33 @@ TEST=true
 ```
 
 Po uruchomieniu aplikacja będzie dostępna pod adresem http://127.0.0.1:8000/.
+
+
+### 9. Ekstrakcja stron
+Estrakcja wybranych stron z pliku pdf
+
+url: `api/extract-pages`
+
+method: POST
+
+body: file: plik, pages: strony, np. 1,3,5-7,9
+## Endpoints
+
+### Frontend
+`/remove-password`
+
+### Backend
+`/api/merge-pdfs `- endpoint do mergowania plików pdf  
+`/api/remove-password` - endpoint do usuwania hasła dla pliku pdf   
+`/api/remove-pages` - endpoint do usuwania stron z pliku pdf   
+
+
+
+### 9. Ekstrakcja stron
+Estrakcja wybranych stron z pliku pdf
+
+url: `api/extract-pages`
+
+method: POST
+
+body: file: plik, pages: strony, np. 1,3,5-7,9
