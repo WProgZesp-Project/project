@@ -177,4 +177,5 @@ cython_debug/
 .pypirc
 
 # Local media directory
-pdfapp/media/
+pdfapp/media/*
+!pdfapp/media/.gitkeep
