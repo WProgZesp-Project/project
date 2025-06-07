@@ -1,7 +1,7 @@
 from django.test import SimpleTestCase, RequestFactory
 from django.urls import reverse, resolve
 from pdfhandler.views.index_view import index
-from pdfhandler.views.merge_pdf_view import merge_pdfs
+from pdfhandler.views.merge_pdf import merge_pdfs, merge_form, merge_result
 
 
 class SimpleURLTestCase(SimpleTestCase):
