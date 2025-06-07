@@ -79,6 +79,7 @@ class SplitPDFView(APIView):
 
 
             # Handle the rest of the pages
+
             rest_writer = PdfWriter()
             for i in range(total_pages):
                 if i not in included_pages:
@@ -95,8 +96,8 @@ class SplitPDFView(APIView):
                     f.write(output_stream.read())
 
                 rest_file_url = f"{settings.MEDIA_URL}{rest_filename}"
-                download_links.append(f'<div class="download-btn"><a href="{rest_file_url}" download class="btn">Download split_rest.pdf</a></div>')
-
+                download_links.append(
+                    f'<div class="download-btn"><a href="{rest_file_url}" download class="btn">Download split_rest.pdf</a></div>')
 
             return HttpResponse('''
                 <p style="font-weight:bold;">Your PDF has been split successfully!</p>
