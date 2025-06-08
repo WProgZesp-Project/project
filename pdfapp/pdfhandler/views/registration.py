@@ -1,5 +1,4 @@
-from rest_framework import generics, permissions, status
-from rest_framework.response import Response
+from rest_framework import generics, permissions
 from ..serializers.registration_serializer import UserRegistrationSerializer
 import os
 

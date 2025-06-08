@@ -53,8 +53,9 @@ class UserLoginView(generics.GenericAPIView):
 
             if not user.is_active:
                 return self._handle_error_response(
-                    request, 
-                    "Account is not activated yet. Please check your email and click the verification link we sent you.", 
+                    request,
+                    "Account is not activated yet. Please check your email and "
+                    "click the verification link we sent you.",
                     status.HTTP_403_FORBIDDEN
                 )
 

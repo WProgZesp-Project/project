@@ -155,7 +155,7 @@ class PasswordResetConfirmView(generics.GenericAPIView):
                 'token': token
             })
             
-        except Exception as e:
+        except Exception:
             messages.error(request, "Password reset link is invalid!")
             return redirect('login')
 
