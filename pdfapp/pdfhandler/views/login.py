@@ -14,15 +14,16 @@ class UserLoginView(generics.GenericAPIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
-        # render full login page
         return render(request, 'login.html')
 
     def _handle_error_response(self, request, error_message, status_code):
+        """Helper method to handle error responses in a consistent way"""
         if request.headers.get('Hx-Request'):
             return HttpResponse(f'<div class="error">{error_message}</div>')
         return Response({"error": error_message}, status=status_code)
 
     def _handle_success_response(self, request):
+        """Helper method to handle successful login responses"""
         if request.headers.get('Hx-Request'):
             response = HttpResponse(status=200)
             response['HX-Redirect'] = '/'
@@ -47,13 +48,10 @@ class UserLoginView(generics.GenericAPIView):
         password = serializer.validated_data['password']
 
         try:
-            # First find the user by email
             user_obj = User.objects.get(email=email)
-            # Then authenticate with username and password
             user = authenticate(username=user_obj.username, password=password)
 
             if not user:
-                # Authentication failed - invalid password
                 return self._handle_error_response(
                     request, "Invalid password.", status.HTTP_401_UNAUTHORIZED)
 
@@ -61,7 +59,6 @@ class UserLoginView(generics.GenericAPIView):
                 return self._handle_error_response(
                     request, "Account is not activated yet.", status.HTTP_403_FORBIDDEN)
 
-            # User authenticated successfully - log them in
             login(request, user)
             return self._handle_success_response(request)
 
