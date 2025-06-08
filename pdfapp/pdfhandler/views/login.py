@@ -5,9 +5,7 @@ from rest_framework.response import Response
 from django.contrib.auth import get_user_model, login, authenticate
 from ..serializers.login_serializer import UserLoginSerializer
 
-
 User = get_user_model()
-
 
 class UserLoginView(generics.GenericAPIView):
     serializer_class = UserLoginSerializer
@@ -17,13 +15,11 @@ class UserLoginView(generics.GenericAPIView):
         return render(request, 'login.html')
 
     def _handle_error_response(self, request, error_message, status_code):
-        """Helper method to handle error responses in a consistent way"""
         if request.headers.get('Hx-Request'):
             return HttpResponse(f'<div class="error">{error_message}</div>')
         return Response({"error": error_message}, status=status_code)
 
     def _handle_success_response(self, request):
-        """Helper method to handle successful login responses"""
         if request.headers.get('Hx-Request'):
             response = HttpResponse(status=200)
             response['HX-Redirect'] = '/'
@@ -57,13 +53,14 @@ class UserLoginView(generics.GenericAPIView):
 
             if not user.is_active:
                 return self._handle_error_response(
-                    request, "Account is not activated yet.", status.HTTP_403_FORBIDDEN)
+                    request, 
+                    "Account is not activated yet. Please check your email and click the verification link we sent you.", 
+                    status.HTTP_403_FORBIDDEN
+                )
 
             login(request, user)
             return self._handle_success_response(request)
 
         except User.DoesNotExist:
-            # No user with that email
             return self._handle_error_response(
                 request, "No user with that email exists.", status.HTTP_401_UNAUTHORIZED)
-        

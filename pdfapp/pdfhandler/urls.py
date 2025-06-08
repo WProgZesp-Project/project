@@ -11,6 +11,12 @@ from .views.remove_password_view import (
 from .views.remove_pdf_pages_view import (
     remove_pdf_pages, remove_pdf_pages_view
 )
+from pdfhandler.views.password_reset_views import (
+    PasswordResetView,
+    PasswordResetSentView,
+    PasswordResetConfirmView,
+    PasswordResetCompleteView,
+)
 from .views.split import SplitPDFView, SplitPDFTemplateView
 from .views.merge_pdf import merge_pdfs, merge_form, merge_result
 from .views.login import UserLoginView
@@ -31,6 +37,10 @@ urlpatterns = [
     ),
     path('activate/<uidb64>/<token>', activate, name='activate'),
     path('remove-password/', remove_password_page, name='remove_password_page'),
+    path('password-reset/', PasswordResetView.as_view(), name='password_reset'),
+    path('password-reset/sent/', PasswordResetSentView.as_view(), name='password_reset_sent'),
+    path('password-reset/confirm/<str:uidb64>/<str:token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('password-reset/complete/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path(
         'remove-password/api/',
         remove_pdf_password,
