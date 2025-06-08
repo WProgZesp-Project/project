@@ -1,4 +1,6 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from .views.index_view import index
 from .views.registration import (
     UserRegistrationView, RegistrationSuccessView, activate
@@ -9,7 +11,8 @@ from .views.remove_password_view import (
 from .views.remove_pdf_pages_view import (
     remove_pdf_pages, remove_pdf_pages_view
 )
-from .views.merge_pdf_view import merge_pdfs
+from .views.split import SplitPDFView, SplitPDFTemplateView
+from .views.merge_pdf import merge_pdfs, merge_form, merge_result
 from .views.login import UserLoginView
 from .views.logout import UserLogoutView
 
@@ -18,6 +21,8 @@ from .views.operation_history_view import history_fragment, history_page
 
 urlpatterns = [
     path('', index, name='index'),
+    path('merge/', merge_form, name='merge_form'),
+    path('merge/result/', merge_result, name='merge_result'),
     path('register/', UserRegistrationView.as_view(), name='register'),
     path(
         'register/success/',
@@ -42,5 +47,8 @@ urlpatterns = [
     path('api/merge-pdfs/', merge_pdfs, name='merge_pdfs'),
     path('api/extract-pages', ExtractPagesView.as_view(), name='extract-pages'),
     path('history/', history_page, name='history'),
-    path('history/fragment/', history_fragment, name='history_fragment')
+    path('history/fragment/', history_fragment, name='history_fragment'),
+    path('split/', SplitPDFTemplateView.as_view(), name='split_pdf_page'),
+    path("api/split/", SplitPDFView.as_view(), name="split_pdf"),
 ]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
