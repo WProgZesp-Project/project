@@ -1,3 +1,4 @@
+<!-- filepath: /home/ga1ile0/Desktop/code/project/pdfapp/pdfhandler/templates/login.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,7 +22,7 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     .login h2 {
-      color: #639EE;
+      color: #639EEC;
       text-align: center;
       margin-top: 0;
     }
@@ -36,41 +37,33 @@
       border-radius: 4px;
       box-sizing: border-box;
     }
-    .login button {
-      margin-top: 1rem;
+    /* Common button styles for both buttons */
+    .btn {
+      display: block;
       width: 100%;
       padding: .6rem;
+      margin-top: 1rem;
       background: #85DECB;
       border: none;
       border-radius: 4px;
       color: #fff;
       font-size: 1rem;
+      text-align: center;
+      text-decoration: none;
       cursor: pointer;
       transition: background .2s, transform .1s;
+      box-sizing: border-box;
     }
-    .login button:hover {
+    .btn:hover {
       background: #78cbb0;
-      transform: translateY(-1px);
-    }
-    .signup-button {
-      margin-top: .5rem;
-      width: 100%;
-      padding: .6rem;
-      background: #639EE;
-      border: none;
-      border-radius: 4px;
-      color: #fff;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background .2s, transform .1s;
-    }
-    .signup-button:hover {
-      background: #5784b1;
       transform: translateY(-1px);
     }
     .error {
       color: red;
       margin-top: .5rem;
+      padding: 0.5rem;
+      border-radius: 4px;
+      background-color: #ffeeee;
     }
   </style>
 </head>
@@ -83,22 +76,27 @@
       {% endif %}
     </div>
     <form
+      id="login-form"
       hx-post="{% url 'login' %}"
       hx-target="#login-error"
       hx-swap="innerHTML">
+      {% csrf_token %}
       <label for="id_email">Email</label>
       <input type="email" id="id_email" name="email" required>
       <label for="id_password">Password</label>
       <input type="password" id="id_password" name="password" required>
-      <button type="submit">Log in</button>
+      <button type="submit" class="btn">Log in</button>
     </form>
-    <button
-      class="signup-button"
-      hx-get="{% url 'register' %}"
-      hx-target="#main-content"
-      hx-swap="innerHTML">
-      Sign Up
-    </button>
+    <a href="{% url 'register' %}" class="btn">Sign Up</a>
   </div>
+
+  <script>
+    document.addEventListener('htmx:afterRequest', function(event) {
+      if (event.detail.successful && !event.detail.xhr.responseText) {
+        // If the response is empty, it means login was successful
+        window.location.href = '/';
+      }
+    });
+  </script>
 </body>
 </html>
