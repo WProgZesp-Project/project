@@ -2,10 +2,9 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from ..serializers.registration_serializer import UserRegistrationSerializer
 import os
-import json
 
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.views import View
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -25,7 +24,6 @@ class UserRegistrationView(generics.GenericAPIView):
         return render(request, 'registration.html')
 
     def _activateEmail(self, request, user):
-        # If TEST mode is enabled, skip email sending and activate user directly
         if os.getenv("TEST") == "true":
             user.is_active = True
             return True
@@ -49,12 +47,9 @@ class UserRegistrationView(generics.GenericAPIView):
         if serializer.is_valid():
             user = serializer.create(serializer.validated_data)
             
-            # Attempt to send activation email or activate directly in TEST mode
             if self._activateEmail(request, user):
-                # Save the user (now with is_active=True if in TEST mode)
                 user.save()
                 
-                # Handle HTMX or XMLHttpRequest
                 is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
                 is_htmx = request.headers.get('HX-Request') == 'true'
                 
@@ -63,24 +58,19 @@ class UserRegistrationView(generics.GenericAPIView):
                     response['HX-Redirect'] = f"/register/success/?email={user.email}"
                     return response
                 
-                # For regular form submission
                 return redirect('registration_success', email=user.email)
             
-            # If activation email failed
             return Response(
                 {"message": "Problem with sending verification email"},
                 status=status.HTTP_400_BAD_REQUEST)
 
-        # Handle errors - important fix here
         errors = serializer.errors
         is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
         is_htmx = request.headers.get('HX-Request') == 'true'
         
         if is_ajax or is_htmx:
-            # Return errors as JSON with 400 status code
             return JsonResponse(errors, status=400)
         
-        # For regular form submission
         return render(request, 'registration.html', {'errors': errors}, status=400)
 
 
