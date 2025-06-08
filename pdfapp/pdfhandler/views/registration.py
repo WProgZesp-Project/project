@@ -46,31 +46,23 @@ class UserRegistrationView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             user = serializer.create(serializer.validated_data)
-            
             if self._activateEmail(request, user):
                 user.save()
-                
                 is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
                 is_htmx = request.headers.get('HX-Request') == 'true'
-                
                 if is_ajax or is_htmx:
                     response = JsonResponse({"message": "User created successfully."}, status=201)
                     response['HX-Redirect'] = f"/register/success/?email={user.email}"
                     return response
-                
                 return redirect('registration_success', email=user.email)
-            
             return Response(
                 {"message": "Problem with sending verification email"},
                 status=status.HTTP_400_BAD_REQUEST)
-
         errors = serializer.errors
         is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
         is_htmx = request.headers.get('HX-Request') == 'true'
-        
         if is_ajax or is_htmx:
             return JsonResponse(errors, status=400)
-        
         return render(request, 'registration.html', {'errors': errors}, status=400)
 
 
@@ -87,11 +79,9 @@ def activate(request, uidb64, token):
         user = UserModel.objects.get(pk=uid)
     except Exception:
         user = None
-
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
-
         messages.success(
             request,
             "Thank you for your email confirmation. Now you can login your account."
@@ -99,5 +89,4 @@ def activate(request, uidb64, token):
         return redirect('login')
     else:
         messages.error(request, "Activation link is invalid!")
-
     return redirect('index')

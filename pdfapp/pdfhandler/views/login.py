@@ -66,3 +66,4 @@ class UserLoginView(generics.GenericAPIView):
             # No user with that email
             return self._handle_error_response(
                 request, "No user with that email exists.", status.HTTP_401_UNAUTHORIZED)
+        
