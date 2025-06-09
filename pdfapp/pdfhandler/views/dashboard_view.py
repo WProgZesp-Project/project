@@ -1,9 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
 import json
+
 
 class DashboardView(APIView):
     authentication_classes = [TokenAuthentication]
