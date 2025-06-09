@@ -5,6 +5,7 @@ from .views.registration import (
 from .views.remove_password_view import (
     remove_pdf_password, remove_password_page
 )
+from .views.index_view import index
 from .views.merge_pdf_view import merge_pdfs
 from .views.dashboard_view import DashboardView
 from .views.login import UserLoginView
@@ -12,6 +13,7 @@ from .views.logout import UserLogoutView
 
 
 urlpatterns = [
+    path('', index, name='index'),
     path('register/', UserRegistrationView.as_view(), name='register'),
     path(
         'register/success/',
