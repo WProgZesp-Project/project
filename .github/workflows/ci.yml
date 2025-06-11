@@ -77,23 +77,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
-    - name: Install AWS CLI
-      run: pip install awscli
+      # (opcjonalnie) Usuń ten krok, AWS CLI v2 jest preinstalowane na ubuntu-latest
+      #- name: Install AWS CLI
+      #  run: pip install awscli
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-central-1
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
 
-    - name: Deploy to test environment
-      run: ./deploy_to_test_env.sh
+      - name: Login to Amazon ECR
+        run: |
+          aws ecr get-login-password \
+            --region eu-central-1 \
+          | docker login \
+            --username AWS \
+            --password-stdin 384782264249.dkr.ecr.eu-central-1.amazonaws.com
+
+      - name: Deploy to test environment
+        run: ./.github/deploy_to_test_env.sh
+
