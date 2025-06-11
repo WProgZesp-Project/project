@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Zmienna z tagiem
+# Zmienna z tagiema
 IMAGE_TAG=pdfapp:latest
 
 # Zbuduj obraz
