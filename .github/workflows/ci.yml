@@ -70,7 +70,7 @@ jobs:
         export PYTHONPATH=$PYTHONPATH:$(pwd)
         pytest
 
-deploy:
+  deploy:
     name: Deploy to AWS (test)
     needs: lint-and-test
     runs-on: ubuntu-latest
