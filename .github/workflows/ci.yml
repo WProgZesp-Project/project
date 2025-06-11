@@ -119,12 +119,6 @@ jobs:
           docker push \
             ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:backend-latest
 
-          # web (jeśli masz frontend w tym repo)
-          docker tag project-backend:latest \
-            ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:web-latest
-          docker push \
-            ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:web-latest
-
       - name: Ensure ECS cluster exists
         run: |
           aws ecs describe-clusters \

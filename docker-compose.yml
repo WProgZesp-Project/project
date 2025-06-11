@@ -1,15 +1,5 @@
 services:
 
-  pdfdb:
-    image: postgres:14
-    container_name: pdf-postgres
-    env_file:
-      - .env
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-
   backend:
     build: .
     container_name: pdf-backend
@@ -17,8 +7,3 @@ services:
       - "8000:8000"
     env_file:
       - .env
-    depends_on:
-      - pdfdb
-
-volumes:
-  pgdata:
