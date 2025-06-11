@@ -73,7 +73,7 @@ jobs:
   deploy:
     name: Deploy to AWS (test)
     needs: lint-and-test
-    if: github.ref == 'refs/heads/main'
+#    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
