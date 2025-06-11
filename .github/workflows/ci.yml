@@ -74,7 +74,7 @@ jobs:
     name: Deploy to AWS (test)
     needs: lint-and-test
     runs-on: ubuntu-latest
-#    if: github.ref == 'refs/heads/main' //
+#    if: github.ref == 'refs/heads/main'
 
     env:
       AWS_ACCOUNT_ID: 384782264249
