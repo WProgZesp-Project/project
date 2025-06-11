@@ -26,7 +26,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['pdfapp-alb-431451943.eu-north-1.elb.amazonaws.com']
+ALLOWED_HOSTS = ['*', 'pdfapp-alb-431451943.eu-north-1.elb.amazonaws.com', "localhost"]
 
 
 # Application definition
