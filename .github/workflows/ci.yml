@@ -73,27 +73,65 @@ jobs:
   deploy:
     name: Deploy to AWS (test)
     needs: lint-and-test
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+#    if: github.ref == 'refs/heads/main' #test
+
+    env:
+      AWS_ACCOUNT_ID: 384782264249
+      AWS_REGION:    eu-north-1
+      ECR_REPOSITORY:    ${{ secrets.ECR_REPOSITORY }}
+      ECS_CLUSTER:       ${{ secrets.ECS_CLUSTER }}
+      ECS_SERVICE_NAME:  ${{ secrets.ECS_SERVICE_NAME }}
+      ECS_TASK_FAMILY:   ${{ secrets.ECS_TASK_FAMILY }}
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ env.AWS_REGION }}
 
-    - name: Install AWS CLI
-      run: pip install awscli
+      - name: Ensure ECR repo exists
+        run: |
+          aws ecr describe-repositories \
+            --repository-names ${ECR_REPOSITORY} \
+          || aws ecr create-repository \
+            --repository-name ${ECR_REPOSITORY}
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-central-1
+      - name: Login to Amazon ECR
+        run: |
+          aws ecr get-login-password \
+            --region ${AWS_REGION} \
+          | docker login \
+            --username AWS \
+            --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
 
-    - name: Deploy to test environment
-      run: ./deploy_to_test_env.sh
+      - name: Build & Push images
+        run: |
+          # backend
+          docker build -t project-backend:latest .
+          docker tag project-backend:latest \
+            ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:backend-latest
+          docker push \
+            ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:backend-latest
+
+      - name: Ensure ECS cluster exists
+        run: |
+          aws ecs describe-clusters \
+            --clusters ${ECS_CLUSTER} \
+          | grep ACTIVE \
+          || aws ecs create-cluster \
+            --cluster-name ${ECS_CLUSTER}
+
+      - name: Update ECS service to new task
+        run: |
+          aws ecs update-service \
+            --cluster ${ECS_CLUSTER} \
+            --service ${ECS_SERVICE_NAME} \
+            --force-new-deployment \
+            --task-definition ${ECS_TASK_FAMILY}
+
