@@ -1,4 +1,3 @@
-# filepath: /home/ga1ile0/Desktop/code/project/pdfapp/pdfhandler/views/logout.py
 from django.shortcuts import redirect
 from django.contrib.auth import logout
 from django.views import View

@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PDF Manager</title>
 
-    <!-- Styles -->
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="stylesheet" href="{% static 'css/buttons.css' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
@@ -70,34 +69,28 @@
         </a>
     </div>
 
-    <!-- Scripts -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Fix logout functionality
             const logoutButton = document.getElementById('logoutButton');
             if (logoutButton) {
                 logoutButton.addEventListener('click', function(e) {
                     e.preventDefault();
                     
-                    // Create form for CSRF protection
                     const form = document.createElement('form');
                     form.method = 'POST';
                     form.action = "{% url 'logout' %}";
                     
-                    // Add CSRF token
                     const csrfInput = document.createElement('input');
                     csrfInput.type = 'hidden';
                     csrfInput.name = 'csrfmiddlewaretoken';
                     csrfInput.value = getCookie('csrftoken');
                     form.appendChild(csrfInput);
                     
-                    // Submit the form
                     document.body.appendChild(form);
                     form.submit();
                 });
             }
 
-            // Helper function to get cookies (for CSRF token)
             function getCookie(name) {
                 let cookieValue = null;
                 if (document.cookie && document.cookie !== '') {

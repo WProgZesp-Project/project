@@ -1,6 +1,3 @@
-/* Dashboard page styles */
-
-/* Grid layout for menu tiles */
 .menu-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -49,7 +46,6 @@
     height: 60px;
 }
 
-/* Responsive adjustments */
 @media (max-width: 1200px) {
     .menu-grid {
         grid-template-columns: repeat(4, 1fr);

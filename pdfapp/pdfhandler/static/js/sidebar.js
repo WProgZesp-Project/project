@@ -1,11 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Set username in the sidebar
     const usernameElement = document.querySelector('.sidebar .username');
     if (usernameElement && window.username) {
         usernameElement.textContent = window.username;
     }
 
-    // Toggle sidebar
     const userInfo = document.getElementById('userInfo');
     const sidebar = document.getElementById('sidebar');
     const closeSidebar = document.getElementById('closeSidebar');
@@ -22,7 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Toggle submenu sections
     const sections = document.querySelectorAll('.sidebar-section');
     
     sections.forEach(section => {
@@ -36,7 +33,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Function to handle logout
     function handleLogout() {
         fetch('/logout/', {
             method: 'POST',
@@ -53,7 +49,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Handle logout from sidebar
     const logoutLink = document.getElementById('logoutLink');
     if (logoutLink) {
         logoutLink.addEventListener('click', function(e) {
@@ -62,7 +57,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Handle logout from button in header
     const logoutButton = document.getElementById('logoutButton');
     if (logoutButton) {
         logoutButton.addEventListener('click', function(e) {
@@ -71,7 +65,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Helper function to get cookies (for CSRF token)
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
