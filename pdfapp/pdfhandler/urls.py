@@ -20,13 +20,14 @@ from pdfhandler.views.password_reset_views import (
 from .views.split import SplitPDFView, SplitPDFTemplateView
 from .views.merge_pdf import merge_pdfs, merge_form, merge_result
 from .views.login import UserLoginView
-from .views.logout import UserLogoutView
+from .views.logout import LogoutView 
 
 from .views.extract_pdf_view import ExtractPagesView
 from .views.operation_history_view import history_fragment, history_page
+from .views.dashboard_view import DashboardView
 
 urlpatterns = [
-    path('', index, name='index'),
+    path('', DashboardView.as_view(), name='index'),
     path('merge/', merge_form, name='merge_form'),
     path('merge/result/', merge_result, name='merge_result'),
     path('register/', UserRegistrationView.as_view(), name='register'),
@@ -57,7 +58,7 @@ urlpatterns = [
         name='remove_pdf_pages'
     ),
     path('login/', UserLoginView.as_view(), name='login'),
-    path('logout/', UserLogoutView.as_view(), name='logout'),
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('api/merge-pdfs/', merge_pdfs, name='merge_pdfs'),
     path('api/extract-pages', ExtractPagesView.as_view(), name='extract-pages'),
     path('history/', history_page, name='history'),
