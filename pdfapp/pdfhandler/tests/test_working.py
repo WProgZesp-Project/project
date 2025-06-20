@@ -10,6 +10,7 @@ from pdfhandler.views.login import UserLoginView
 from pdfhandler.views.logout import UserLogoutView
 from pdfhandler.views.extract_pdf_view import ExtractPagesView
 from pdfhandler.views.operation_history_view import history_fragment, history_page
+from pdfhandler.views.dashboard_view import DashboardView
 
 
 class SimpleURLTestCase(SimpleTestCase):
