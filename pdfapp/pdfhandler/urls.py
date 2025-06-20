@@ -57,7 +57,7 @@ urlpatterns = [
         name='remove_pdf_pages'
     ),
     path('login/', UserLoginView.as_view(), name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
+    path('logout/', UserLogoutView.as_view(), name='logout'),
     path('api/merge-pdfs/', merge_pdfs, name='merge_pdfs'),
     path('api/extract-pages', ExtractPagesView.as_view(), name='extract-pages'),
     path('history/', history_page, name='history'),
