@@ -1,0 +1,40 @@
+/* Button styles */
+
+.btn {
+    background-color: #85DECB;
+    border: none;
+    padding: 20px 40px;
+    font-size: 1.5em;
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+    color: #0d1215;
+    box-shadow: 5px 5px 0 #6395EE;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s, transform 0.2s;
+    text-decoration: none;
+}
+
+.btn:hover {
+    background-color: #78cbb0;
+    transform: translateY(-2px);
+}
+
+.btn-upload {
+    padding: 30px 125px;
+    font-size: 2em;
+}
+
+.auth-buttons {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 15px;
+}
+
+.btn.btn-auth {
+    padding: 6px 12px;
+    font-size: 1em;
+    box-shadow: 2px 2px 0 #6395EE;
+}

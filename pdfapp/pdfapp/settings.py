@@ -26,7 +26,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['pdfapp-alb-431451943.eu-north-1.elb.amazonaws.com', "localhost"]
+ALLOWED_HOSTS = ['pdfapp-alb-431451943.eu-north-1.elb.amazonaws.com', "localhost", "127.0.0.1"]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -147,6 +147,4 @@ EMAIL_HOST_USER = os.getenv('EMAIL')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASS')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_SSL_CERTFILE = None
-EMAIL_SSL_KEYFILE = None
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

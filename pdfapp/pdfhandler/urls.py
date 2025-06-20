@@ -1,7 +1,6 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from .views.index_view import index
 from .views.registration import (
     UserRegistrationView, RegistrationSuccessView, activate
 )
@@ -20,13 +19,14 @@ from pdfhandler.views.password_reset_views import (
 from .views.split import SplitPDFView, SplitPDFTemplateView
 from .views.merge_pdf import merge_pdfs, merge_form, merge_result
 from .views.login import UserLoginView
-from .views.logout import UserLogoutView
+from .views.logout import UserLogoutView 
 
 from .views.extract_pdf_view import ExtractPagesView
 from .views.operation_history_view import history_fragment, history_page
+from .views.dashboard_view import DashboardView
 
 urlpatterns = [
-    path('', index, name='index'),
+    path('', DashboardView.as_view(), name='index'),
     path('merge/', merge_form, name='merge_form'),
     path('merge/result/', merge_result, name='merge_result'),
     path('register/', UserRegistrationView.as_view(), name='register'),
