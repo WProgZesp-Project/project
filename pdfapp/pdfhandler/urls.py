@@ -1,7 +1,6 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from .views.index_view import index
 from .views.registration import (
     UserRegistrationView, RegistrationSuccessView, activate
 )

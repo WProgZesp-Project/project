@@ -3,9 +3,6 @@ from django.contrib.auth import logout
 from django.views import View
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import permissions, status
 from rest_framework.authtoken.models import Token
 
 
