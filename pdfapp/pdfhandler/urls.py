@@ -19,7 +19,7 @@ from pdfhandler.views.password_reset_views import (
 from .views.split import SplitPDFView, SplitPDFTemplateView
 from .views.merge_pdf import merge_pdfs, merge_form, merge_result
 from .views.login import UserLoginView
-from .views.logout import LogoutView 
+from .views.logout import UserLogoutView 
 
 from .views.extract_pdf_view import ExtractPagesView
 from .views.operation_history_view import history_fragment, history_page
