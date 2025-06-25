@@ -10,13 +10,14 @@ from pdfhandler.views.login import UserLoginView
 from pdfhandler.views.logout import UserLogoutView
 from pdfhandler.views.extract_pdf_view import ExtractPagesView
 from pdfhandler.views.operation_history_view import history_fragment, history_page
+from pdfhandler.views.dashboard_view import DashboardView
 
 
 class SimpleURLTestCase(SimpleTestCase):
     def test_url_resolution(self):
         """Test URL configuration resolves to correct views"""
         # Function-based views
-        self.assertEqual(resolve(reverse('index')).func, index)
+        self.assertEqual(resolve(reverse('index')).func.view_class, DashboardView)
         self.assertEqual(resolve(reverse('merge_form')).func, merge_form)
         self.assertEqual(resolve(reverse('merge_result')).func, merge_result)
         self.assertEqual(resolve(reverse('merge_pdfs')).func, merge_pdfs)
