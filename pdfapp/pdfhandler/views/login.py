@@ -58,7 +58,6 @@ class UserLoginView(generics.GenericAPIView):
                 return self._handle_error_response(
                     request, "Invalid password.", status.HTTP_401_UNAUTHORIZED)
 
-
             login(request, user)
             return self._handle_success_response(request)
 
