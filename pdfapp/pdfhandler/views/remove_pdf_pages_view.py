@@ -77,11 +77,10 @@ def remove_pdf_pages(request):
             )
 
         return FileResponse(
-            open(
-                temp_out_path,
-                'rb'),
+            open(temp_out_path, 'rb'),
             as_attachment=True,
-            filename='removed-pages.pdf')
+            filename=f'{os.path.splitext(pdf_file.name)[0]} (removed-pages).pdf'
+        )
 
     except ValueError:
         return JsonResponse({

@@ -1,87 +1,89 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <title>Remove pages from PDF file</title>
-    <style>
+  <meta charset="UTF-8" />
+  <title>Remove pages from PDF file</title>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&family=Montserrat&display=swap" rel="stylesheet" />
+  <style>
     body {
-      font-family: sans-serif;
-      background: #90B8D6;
-      color: #333;
+      font-family: 'Montserrat', sans-serif;
+      color: #0d1215;
+      background-color: #90B8D6;
+      padding: 2rem;
       margin: 0;
-      padding: 0;
     }
+
     .container {
-      max-width: 500px;
-      margin: 5% auto;
-      padding: 1rem;
+      max-width: 600px;
+      margin: 0 auto;
     }
+
     .form-box {
       background: #fff;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 4rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border-left: 6px solid #88CFA8;
+      text-align: left;
     }
+
     h4 {
-      color: #639EE;
-      text-align: center;
-      margin-bottom: 1.5rem;
+      font-family: 'Libre Baskerville', serif;
+      color: #0d1215;
+      margin-bottom: 2rem;
+      font-size: 1.5rem;
     }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      width: 100%;
+    }
+
     label {
+      font-weight: 600;
       display: block;
-      margin: 1rem 0 0.4rem;
-      font-weight: bold;
+      margin-bottom: 0.5rem;
     }
 
     input[type="file"] {
-      display: none;
-    }
-
-    .custom-file-label {
-      display: inline-block;
-      padding: 0.5rem 1rem;
-      background: #85DECB;
-      color: #fff;
-      border-radius: 4px;
-      cursor: pointer;
-      text-align: center;
-      margin-bottom: 1rem;
-      transition: background 0.2s, transform 0.1s;
-    }
-
-    .custom-file-label:hover {
-      background: #78cbb0;
-      transform: translateY(-1px);
+      border: 2px dashed #85DECB;
+      border-radius: 6px;
+      padding: 1rem;
+      width: 100%;
+      background-color: #f0fdfa;
+      color: #0d1215;
+      box-sizing: border-box;
     }
 
     .filename {
       margin-top: 0.5rem;
       font-style: italic;
+      color: #444;
     }
 
     input[type="text"] {
       width: 100%;
       padding: 0.5rem;
       border: 1px solid #88CFA8;
-      border-radius: 4px;
+      border-radius: 6px;
       box-sizing: border-box;
     }
 
     button {
-      margin-top: 1.5rem;
-      width: 100%;
-      padding: 0.75rem;
-      background: #85DECB;
+      background-color: #6395EE;
+      color: white;
       border: none;
-      border-radius: 4px;
-      color: #fff;
-      font-size: 1rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 5px;
       cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+      width: 100%;
+      margin-top: 1.5rem;
     }
+
     button:hover {
-      background: #78cbb0;
-      transform: translateY(-1px);
+      background-color: #85DECB;
     }
 
     .error {
@@ -90,11 +92,15 @@
     }
 
     #remove-pages-result {
-      margin-top: 1rem;
-      text-align: center;
+      margin-top: 2rem;
+      background-color: #e9f9f5;
+      padding: 1rem;
+      border-radius: 6px;
+      border: 1px solid #85DECB;
       font-weight: bold;
+      text-align: center;
     }
-    </style>
+  </style>
 </head>
 <body>
   <div class="container">
@@ -136,7 +142,9 @@
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'removed-pages.pdf';
+                const disposition = response.headers.get('Content-Disposition');
+                const filenameMatch = /filename="?([^"]+)"?/.exec(disposition);
+                a.download = filenameMatch ? filenameMatch[1] : 'removed-pages.pdf';
                 document.body.appendChild(a);
                 a.click();
                 a.remove();
