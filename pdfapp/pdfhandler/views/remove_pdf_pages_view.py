@@ -23,7 +23,6 @@ def parse_page_ranges(page_string):
             page_nums.add(int(part) - 1)
     return page_nums
 
-
 @csrf_exempt
 @require_POST
 def remove_pdf_pages(request):
@@ -35,16 +34,28 @@ def remove_pdf_pages(request):
             {'error': 'PDF file and pages to remove are required.'}, status=400)
 
     try:
-        pages_to_remove = parse_page_ranges(pages_str)
+        reader = PdfReader(pdf_file)
+        total_pages = len(reader.pages)
     except Exception:
-        return JsonResponse(
-            {'error': 'Invalid pages format. Use format like 1,2,4-6.'}, status=400)
+        return JsonResponse({'error': 'Failed to read PDF file.'}, status=400)
 
     try:
-        reader = PdfReader(pdf_file)
-        writer = PdfWriter()
-        total_pages = len(reader.pages)
+        raw_pages_to_remove = parse_page_ranges(pages_str)
 
+        pages_to_remove = set()
+        for p in raw_pages_to_remove:
+            if not isinstance(p, int) or p < 0 or p >= total_pages:
+                return JsonResponse({
+                    'error': f'Page number {p + 1} is out of range. PDF has {total_pages} pages.'
+                }, status=400)
+            pages_to_remove.add(p)
+
+        if len(pages_to_remove) >= total_pages:
+            return JsonResponse({
+                'error': 'Cannot remove all pages from the PDF file.'
+            }, status=400)
+
+        writer = PdfWriter()
         for i in range(total_pages):
             if i not in pages_to_remove:
                 writer.add_page(reader.pages[i])
@@ -72,5 +83,9 @@ def remove_pdf_pages(request):
             as_attachment=True,
             filename='removed-pages.pdf')
 
+    except ValueError:
+        return JsonResponse({
+            'error': 'Invalid pages format. Use format like 1,2,4-6.'
+        }, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
