@@ -24,6 +24,7 @@ from .views.logout import UserLogoutView
 from .views.extract_pdf_view import ExtractPagesView
 from .views.operation_history_view import history_fragment, history_page
 from .views.dashboard_view import DashboardView
+from .views.compress_and_zip import compress_and_zip
 
 urlpatterns = [
     path('', DashboardView.as_view(), name='index'),
@@ -64,5 +65,6 @@ urlpatterns = [
     path('history/fragment/', history_fragment, name='history_fragment'),
     path('split/', SplitPDFTemplateView.as_view(), name='split_pdf_page'),
     path("api/split/", SplitPDFView.as_view(), name="split_pdf"),
+    path('compress/', compress_and_zip, name='compress_and_zip'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
