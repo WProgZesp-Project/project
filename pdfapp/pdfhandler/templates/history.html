@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Historia operacji | PDFApp</title>
+  <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #90B8D6;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    .history-container {
+      background: #fff;
+      max-width: 600px;
+      margin: 5% auto;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .history-container h2 {
+      color: #639EE;
+      text-align: center;
+      margin-top: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      padding: 0.75rem;
+      border-bottom: 1px solid #ccc;
+      text-align: left;
+    }
+
+    th {
+      background: #f0f0f0;
+    }
+
+    .download-link {
+      color: #639EE;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .download-link:hover {
+      text-decoration: underline;
+    }
+
+    .no-history {
+      text-align: center;
+      color: #777;
+      padding: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="history-container" id="main-content">
+    <h2>Twoje ostatnie operacje</h2>
+
+    <div id="history-list" hx-get="{% url 'history_fragment' %}" hx-trigger="load" hx-swap="innerHTML">
+      <!-- Tu załaduje się fragment z historią -->
+      <p>Ładowanie historii...</p>
+    </div>
+  </div>
+</body>
+</html>

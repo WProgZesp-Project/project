@@ -60,6 +60,8 @@ EMAIL=progzesppdf@gmail.com
 EMAIL_PASS=tztgdqxdykuppjop
 ```
 
+Aby maile faktycznie się wysyłały należy ustawić 'TEST' w .env na 'false'. Jeśli 'TEST' jest ustawione na 'true', to ta funkcjonalność będzie mimickowana. 
+
 ### 8. Lokalne testowanie
 Aby nie musieć za każdą rejestracją potwierdzać maila, należy ustawić zmienną środowiskową:
 ```

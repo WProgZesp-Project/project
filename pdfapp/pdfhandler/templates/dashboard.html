@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF Manager</title>
+
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/buttons.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+<body>
+
+    <div class="top-bar">
+        <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo">
+    
+        {% if authenticated %}
+            <div class="auth-buttons">
+                <a href="{% url 'history' %}" class="btn btn-auth">Profile</a>
+                <a href="#" id="logoutButton" class="btn btn-auth">Logout</a>
+            </div>
+        {% else %}
+            <div class="auth-buttons">
+                <a href="{% url 'login' %}" class="btn btn-auth">Login</a>
+                <a href="{% url 'register' %}" class="btn btn-auth">Register</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="menu-grid">
+        <a href="{% url 'merge_form' %}" class="menu-tile">
+            <span class="menu-title">Merge</span>
+            <div class="menu-icon-container">
+                <img src="https://img.icons8.com/FFFFFF/64/merge-files.png" alt="Merge PDFs" />
+            </div>
+        </a>
+        <a href="{% url 'remove_pdf_pages_view' %}" class="menu-tile">
+            <span class="menu-title">Remove Pages</span>
+            <div class="menu-icon-container">
+                <img src="https://img.icons8.com/FFFFFF/64/file-delete.png" alt="Remove Pages" />
+            </div>
+        </a>
+        <a href="{% url 'split_pdf_page' %}" class="menu-tile">
+            <span class="menu-title">Split</span>
+            <div class="menu-icon-container">
+                <img src="https://img.icons8.com/FFFFFF/64/split-files.png" alt="Split PDF" />
+            </div>
+        </a>
+        <a href="{% url 'compress_and_zip' %}" class="menu-tile">
+            <span class="menu-title">Compress</span>
+            <div class="menu-icon-container">
+                <img src="https://img.icons8.com/FFFFFF/64/zip.png" alt="Compress to ZIP" />
+            </div>
+        </a>
+        <a href="{% url 'remove_password_page' %}" class="menu-tile">
+            <span class="menu-title">Remove Password</span>
+            <div class="menu-icon-container">
+                <img src="https://img.icons8.com/FFFFFF/64/unlock-2.png" alt="Remove Password" />
+            </div>
+        </a>
+        <a href="{% url 'extract-pages' %}" class="menu-tile">
+            <span class="menu-title">Extract Pages</span>
+            <div class="menu-icon-container">
+                <img src="https://img.icons8.com/FFFFFF/64/cut.png" alt="Extract Pages" />
+            </div>
+        </a>        
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutButton = document.getElementById('logoutButton');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = "{% url 'logout' %}";
+                    
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = 'csrfmiddlewaretoken';
+                    csrfInput.value = getCookie('csrftoken');
+                    form.appendChild(csrfInput);
+                    
+                    document.body.appendChild(form);
+                    form.submit();
+                });
+            }
+
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+        });
+    </script>
+</body>
+</html>

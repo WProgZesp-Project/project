@@ -32,6 +32,9 @@ if ENV == 'PRODUCTION':
 elif ENV == "DEVELOPMENT":
     ALLOWED_HOSTS = ['127.0.0.1', "localhost"]
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -160,5 +163,4 @@ EMAIL_HOST_USER = os.getenv('EMAIL')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASS')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_SSL_CERTFILE = None
-EMAIL_SSL_KEYFILE = None
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
