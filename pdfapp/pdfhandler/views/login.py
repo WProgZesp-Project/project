@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
@@ -35,7 +35,8 @@ class UserLoginView(generics.GenericAPIView):
                         status=status.HTTP_403_FORBIDDEN
                     )
                 else:
-                    return HttpResponse(status=200)
+                    return HttpResponse(status=200) #redirect to merge/dashboard?
+                    #return redirect('index') #nie tak
             else:
                 return Response(
                     {"error": "Invalid credentials."},

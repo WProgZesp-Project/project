@@ -21,13 +21,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 load_dotenv()
+ENV = os.getenv('ENV')
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['pdfapp-alb-431451943.eu-north-1.elb.amazonaws.com', "localhost"]
-
+if ENV == 'PRODUCTION':
+    ALLOWED_HOSTS = ['pdfapp-alb-431451943.eu-north-1.elb.amazonaws.com']
+elif ENV == "DEVELOPMENT":
+    ALLOWED_HOSTS = ['127.0.0.1', "localhost"]
 
 # Application definition
 
@@ -84,16 +87,28 @@ WSGI_APPLICATION = 'pdfapp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB'),
-        'USER': os.getenv('POSTGRES_USER'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('POSTGRES_HOST'),
-        'PORT': os.getenv('POSTGRES_PORT'),
+if ENV == 'PRODUCTION':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('POSTGRES_DB'),
+            'USER': os.getenv('POSTGRES_USER'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+            'HOST': os.getenv('POSTGRES_HOST'),
+            'PORT': os.getenv('POSTGRES_PORT'),
+        }
     }
-}
+elif ENV == 'DEVELOPMENT':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'pdfdb',
+            'USER': 'pdfuser',
+            'PASSWORD': 'pdfpass',
+            'HOST': 'localhost',
+            'PORT': 5432,
+        }
+    }
 
 
 # Password validation
