@@ -19,6 +19,7 @@ COPY . .
 
 ARG ENV=PROD
 ENV ENV=${ENV}
+ENV PYTHONPATH=/app/pdfapp
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
