@@ -102,6 +102,9 @@ jobs:
           || aws ecr create-repository \
             --repository-name ${ECR_REPOSITORY}
 
+      - name: Set image tag
+        run: echo "IMAGE_TAG=backend-${GITHUB_SHA}" >> $GITHUB_ENV
+
       - name: Login to Amazon ECR
         run: |
           aws ecr get-login-password \
@@ -110,28 +113,37 @@ jobs:
             --username AWS \
             --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
 
-      - name: Build & Push images
+      - name: Build & Push Docker image
         run: |
-          # backend
-          docker build -t project-backend:latest .
-          docker tag project-backend:latest \
-            ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:backend-latest
-          docker push \
-            ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:backend-latest
+          IMAGE_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${IMAGE_TAG}
+          echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
 
-      - name: Ensure ECS cluster exists
-        run: |
-          aws ecs describe-clusters \
-            --clusters ${ECS_CLUSTER} \
-          | grep ACTIVE \
-          || aws ecs create-cluster \
-            --cluster-name ${ECS_CLUSTER}
+          docker build -t $IMAGE_URI .
+          docker push $IMAGE_URI
 
-      - name: Update ECS service to new task
-        run: |
-          aws ecs update-service \
-            --cluster ${ECS_CLUSTER} \
-            --service ${ECS_SERVICE_NAME} \
-            --force-new-deployment \
-            --task-definition ${ECS_TASK_FAMILY}
+      - name: Render ECS task definition
+        id: render-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: django
+          image: ${{ env.IMAGE_URI }}
+          environment-variables: |
+            ENV=PROD
+            POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
+            POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
+            EMAIL=${{ secrets.EMAIL }}
+            EMAIL_PASS=${{ secrets.EMAIL_PASS }}
+            SECRET_KEY=${{ secrets.SECRET_KEY }}
+
+
+      - name: Deploy to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          cluster: ${{ env.ECS_CLUSTER }}
+          service: ${{ env.ECS_SERVICE_NAME }}
+          task-definition: ${{ steps.render-task-def.outputs.task-definition }}
 
