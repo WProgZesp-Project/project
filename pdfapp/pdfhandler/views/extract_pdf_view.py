@@ -5,7 +5,7 @@ from rest_framework import (
 from django.http import JsonResponse, FileResponse
 from django.shortcuts import render
 from PyPDF2 import PdfReader, PdfWriter
-from ..views.operation_history import save_operation, OperationType
+from ..views.operation_history import save_operation, save_operation_temp, OperationType
 import tempfile
 import os
 
@@ -54,6 +54,8 @@ class ExtractPagesView(generics.GenericAPIView):
 
         if request.user.is_authenticated:
             save_operation(request, temp_out_path, OperationType.EXTRACT, [pdf_file.name])
+        else:
+            save_operation_temp(temp_out_path, OperationType.EXTRACT, [pdf_file.name])
 
         response = FileResponse(
             open(temp_out_path, 'rb'),

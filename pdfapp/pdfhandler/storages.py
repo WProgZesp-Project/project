@@ -4,7 +4,9 @@ import os
 class DownloadableS3Storage(S3Boto3Storage):
     def get_object_parameters(self, name):
         path_parts = name.split('/')
-        if len(path_parts) >= 2:
+        if path_parts[0] == '_temp':
+            new_download_name = os.path.basename(name)
+        elif len(path_parts) >= 2:
             operation, filename = path_parts[1], path_parts[-1]
             new_download_name = f"{operation}_{filename}"
         else:

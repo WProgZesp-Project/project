@@ -70,7 +70,6 @@
   </style>
 </head>
 <body>
-  <!-- Pasek nawigacji -->
   <div class="top-bar">
     <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo">
 
@@ -89,11 +88,10 @@
 
   <div class="divider"></div>
 
-  <!-- Historia -->
   <div class="history-section" id="main-content">
-    <h2>Twoja historia operacji</h2>
+    <h2>Your operation history</h2>
     <div id="history-list" hx-get="{% url 'history_fragment' %}" hx-trigger="load" hx-swap="innerHTML">
-      <p>Ładowanie historii...</p>
+      <p>Loading operation history...</p>
     </div>
   </div>
 

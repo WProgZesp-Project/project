@@ -1,7 +1,7 @@
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from ..views.operation_history import save_operation, OperationType
+from ..views.operation_history import save_operation, save_operation_temp, OperationType
 from PyPDF2 import PdfMerger
 import tempfile
 import os
@@ -39,32 +39,22 @@ def merge_pdfs(request):
         merger.append(f)
         filenames.append(f.name)
 
-    temp_dir = tempfile.mkdtemp()
     first_filename = os.path.splitext(filenames[0])[0]
-    merged_filename = f'merge_{first_filename}.pdf'
-    temp_out_path = os.path.join(temp_dir, merged_filename)
-    print(f"Writing merged PDF to: {temp_out_path}")
-    merger.write(temp_out_path)
+
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp:
+        merger.write(temp)
+        temp_file_path = temp.name
     merger.close()
 
-    if request.user.is_authenticated:
-        save_operation(request, temp_out_path, OperationType.MERGE, filenames)
-
-    final_path = os.path.join(settings.MEDIA_ROOT, merged_filename)
-    print(f"Moving merged PDF to: {final_path}")
-    shutil.move(temp_out_path, final_path)
-
-    shutil.rmtree(temp_dir)
-    print("Temporary directory cleaned up.")
-
-    merged_pdf_url = settings.MEDIA_URL + merged_filename
-    print(f"Merging complete. File available at: {merged_pdf_url}")
+    if not request.user.is_authenticated:
+        s3_path = save_operation_temp(temp_file_path, OperationType.MERGE, filenames)
+    else:
+        s3_path = save_operation(request, temp_file_path, OperationType.MERGE, filenames)
 
     html = render_to_string('merge_result_snippet.html', {
         'message': 'PDFs merged successfully!',
-        'merged_pdf_url': merged_pdf_url
+        'merged_pdf_url': s3_path
     })
-
 
     time.sleep(2)
     return HttpResponse(html)

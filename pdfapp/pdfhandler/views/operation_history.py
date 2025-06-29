@@ -8,8 +8,18 @@ from ..models import OperationHistory, OperationType
 from ..serializers.history_serializer import OperationHistorySerializer
 from django.core.files.base import ContentFile
 from django.contrib.auth.decorators import login_required
+from ..storages import DownloadableS3Storage
 
-# --- Funkcja pomocnicza do zapisu operacji ---
+def save_operation_temp(filepath, operation_type, input_filenames):
+    with open(filepath, 'rb') as f:
+        django_file = File(f)
+        django_file.name = f'_temp/{operation_type}_{os.path.basename(input_filenames[0])}'
+
+        storage = DownloadableS3Storage()
+        storage.save(django_file.name, django_file)
+    
+    return storage.url(django_file.name)
+
 def save_operation(request, file, operation_type, input_filenames):
     if operation_type in [OperationType.COMPRESS_AND_ZIP, OperationType.SPLIT]:
         if hasattr(file, 'getvalue'):
@@ -21,7 +31,7 @@ def save_operation(request, file, operation_type, input_filenames):
 
         django_file.name = f'{input_filenames[0][:-4]}.zip'
 
-        OperationHistory.objects.create(
+        operation = OperationHistory.objects.create(
             user=request.user,
             operation_type=operation_type,
             input_filenames=input_filenames,
@@ -31,15 +41,15 @@ def save_operation(request, file, operation_type, input_filenames):
         with open(file, 'rb') as f:
             django_file = File(f)
             django_file.name = os.path.basename(input_filenames[0]) 
-            OperationHistory.objects.create(
+            operation = OperationHistory.objects.create(
                 user=request.user,
                 operation_type=operation_type,
                 input_filenames=input_filenames,
                 result_file=django_file
             )
+    return operation.result_file.url
         
 
-# --- Widok HTML ---
 @login_required
 def history_page(request):
     return render(request, 'history.html', {
@@ -60,7 +70,6 @@ def history_fragment(request):
     })
 
 
-# --- API: GET i POST (plik przez multipart/form-data) ---
 class OperationHistoryView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -73,7 +82,6 @@ class OperationHistoryView(APIView):
         data = request.data.copy()
         data['user'] = request.user.id
 
-        # Uwaga: Plik musi być przesłany przez `multipart/form-data`
         serializer = OperationHistorySerializer(data=data, files=request.FILES)
         if serializer.is_valid():
             serializer.save(user=request.user)

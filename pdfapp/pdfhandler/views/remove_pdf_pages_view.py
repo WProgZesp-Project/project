@@ -4,7 +4,7 @@ from django.views.decorators.http import require_POST
 from PyPDF2 import PdfReader, PdfWriter
 from django.shortcuts import render
 from ..models import OperationHistory, OperationType
-from ..views.operation_history import save_operation
+from ..views.operation_history import save_operation, save_operation_temp
 import tempfile
 import os
 
@@ -58,9 +58,10 @@ def remove_pdf_pages(request):
             writer.write(temp_out)
             temp_out_path = temp_out.name
         
-        if request.user.is_authenticated:
+        if not request.user.is_authenticated:
+            save_operation_temp(temp_out_path, OperationType.REMOVE_PAGES, [pdf_file.name])
+        else:
             save_operation(request, temp_out_path, OperationType.REMOVE_PAGES, [pdf_file.name])
-
 
         return FileResponse(
             open(

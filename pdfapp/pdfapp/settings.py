@@ -21,16 +21,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 load_dotenv()
-ENV = os.getenv('ENV')
+ENV = os.getenv('ENV', 'DEV').upper()
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-if ENV == 'PRODUCTION':
+
+if ENV == 'PROD':
     ALLOWED_HOSTS = ['pdfapp-alb-431451943.eu-north-1.elb.amazonaws.com']
-elif ENV == "DEVELOPMENT":
+    DEBUG = False
+elif ENV == "DEV":
     ALLOWED_HOSTS = ['127.0.0.1', "localhost"]
+    DEBUG = True
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -92,7 +94,7 @@ WSGI_APPLICATION = 'pdfapp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-if ENV == 'PRODUCTION':
+if ENV == 'PROD':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -103,7 +105,7 @@ if ENV == 'PRODUCTION':
             'PORT': os.getenv('POSTGRES_PORT'),
         }
     }
-elif ENV == 'DEVELOPMENT':
+elif ENV == 'DEV':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',

@@ -2,10 +2,10 @@
   <table>
     <thead>
       <tr>
-        <th>Typ</th>
-        <th>Pliki wejściowe</th>
-        <th>Data</th>
-        <th>Pobierz</th>
+        <th>Operation</th>
+        <th>Input files</th>
+        <th>Date</th>
+        <th>Download</th>
       </tr>
     </thead>
     <tbody>
@@ -19,12 +19,12 @@
         </td>
         <td>{{ op.created_at|date:"Y-m-d H:i" }}</td>
         <td>
-           <a href="{{ op.result_file.url }}" download title="Pobierz">📥</a>
+           <a href="{{ op.result_file.url }}" download title="Download">📥</a>
         </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 {% else %}
-  <div class="no-history">Brak operacji do wyświetlenia.</div>
+  <div class="no-history">No operations to display.</div>
 {% endif %}
