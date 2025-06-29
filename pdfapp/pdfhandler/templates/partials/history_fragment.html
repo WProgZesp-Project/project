@@ -19,9 +19,7 @@
         </td>
         <td>{{ op.created_at|date:"Y-m-d H:i" }}</td>
         <td>
-          <a href="/media/{{ op.result_filename }}" class="download-link" download title="Pobierz">
-            📥
-          </a>
+           <a href="{{ op.result_file.url }}" download title="Pobierz">📥</a>
         </td>
       </tr>
       {% endfor %}

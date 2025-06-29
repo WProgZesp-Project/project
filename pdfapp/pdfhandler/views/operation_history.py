@@ -9,11 +9,11 @@ from ..serializers.history_serializer import OperationHistorySerializer
 
 
 # --- Funkcja pomocnicza do zapisu operacji ---
-def save_operation(request, file, operation_type, input_filenames, new_filename):
+def save_operation(request, file, operation_type, input_filenames):
     if request.user.is_authenticated:
         with open(file, 'rb') as f:
             django_file = File(f)
-            django_file.name = os.path.basename(new_filename)
+            django_file.name = os.path.basename(input_filenames[0]) 
             OperationHistory.objects.create(
                 user=request.user,
                 operation_type=operation_type,

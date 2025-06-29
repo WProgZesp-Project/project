@@ -136,7 +136,7 @@
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'removed-pages.pdf';
+                a.download = 'remove_pages_' + form.file.files[0].name;
                 document.body.appendChild(a);
                 a.click();
                 a.remove();

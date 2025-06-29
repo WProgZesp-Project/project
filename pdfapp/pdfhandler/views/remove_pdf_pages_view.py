@@ -57,19 +57,16 @@ def remove_pdf_pages(request):
         with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_out:
             writer.write(temp_out)
             temp_out_path = temp_out.name
-
-        new_filename = f'{OperationType.REMOVE_PAGES}_{pdf_file.name}'
         
         if request.user.is_authenticated:
-            save_operation(request, temp_out_path, OperationType.REMOVE_PAGES, [pdf_file.name], new_filename)
+            save_operation(request, temp_out_path, OperationType.REMOVE_PAGES, [pdf_file.name])
 
 
         return FileResponse(
             open(
                 temp_out_path,
                 'rb'),
-            as_attachment=True,
-            filename=new_filename)
+            as_attachment=True)
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
