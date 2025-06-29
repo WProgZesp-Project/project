@@ -142,9 +142,7 @@
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                const disposition = response.headers.get('Content-Disposition');
-                const filenameMatch = /filename="?([^"]+)"?/.exec(disposition);
-                a.download = filenameMatch ? filenameMatch[1] : 'removed-pages.pdf';
+                a.download = 'remove_pages_' + form.file.files[0].name;
                 document.body.appendChild(a);
                 a.click();
                 a.remove();

@@ -17,4 +17,6 @@ RUN pip install --upgrade pip && \
 
 COPY . .
 
+RUN python pdfapp/manage.py migrate
+
 CMD ["python", "pdfapp/manage.py", "runserver", "0.0.0.0:8000"]

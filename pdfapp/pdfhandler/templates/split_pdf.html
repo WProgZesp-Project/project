@@ -5,6 +5,10 @@
   <meta charset="UTF-8" />
   <title>Split PDF</title>
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&family=Montserrat&display=swap" rel="stylesheet" />
+  <script>
+  // To ustawienie musi być NA POCZĄTKU
+    htmx.config.withCredentials = true;
+  </script>
   <script src="https://unpkg.com/htmx.org@1.9.2"></script>
   <style>
     body {
@@ -104,6 +108,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="split-container">
     <h1>Split Your PDF</h1>
@@ -113,6 +118,7 @@
       enctype="multipart/form-data"
       hx-post="{% url 'split_pdf' %}"
       hx-target="#split-result"
+      hx-include="[name=csrfmiddlewaretoken]"
     >
       {% csrf_token %}
       <div class="form-group">
@@ -147,6 +153,12 @@
     document.body.addEventListener('htmx:afterRequest', () => {
       spinner.style.display = 'none';
     });
+
+    document.body.addEventListener('htmx:configRequest', (event) => {
+    const token = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+    event.detail.headers['X-CSRFToken'] = token;
+    event.detail.credentials = 'include';
+  });
   </script>
 </body>
 </html>

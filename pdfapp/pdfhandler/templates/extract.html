@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -94,15 +95,16 @@
 <body>
     <div class="merge-container">
         <h1>Upload PDF & Select Pages</h1>
-        <form id="pdfForm">
+        <form id="pdfForm" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
             <div>
                 <label for="pdfFile">Choose PDF File:</label>
-                <input type="file" id="pdfFile" accept=".pdf" required>
+                <input type="file" id="pdfFile" name="file" accept=".pdf" required>
                 <p id="file-error" style="display: none;"></p>
             </div>
             <div>
                 <label for="pageNumbers">Select Pages:</label>
-                <input type="text" id="pageNumbers" placeholder="e.g., 1,3,5-10" required>
+                <input type="text" id="pageNumbers" name="pages" placeholder="e.g., 1,3,5-10" required>
                 <p id="page-error" style="display: none;"></p>
             </div>
             <button type="submit" class="btn">Upload & Process</button>
@@ -124,6 +126,16 @@
         const downloadSection = document.getElementById('download-section');
         const downloadLink = document.getElementById('download-link');
 
+        function isValidPageRange(pageRange) {
+            const ranges = pageRange.split(',');
+            for (const range of ranges) {
+                if (!range.match(/^\d+$/) && !range.match(/^\d+-\d+$/)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         pdfFile.addEventListener('change', () => {
             if (pdfFile.files.length > 0 && pdfFile.files[0].type !== 'application/pdf') {
                 fileError.textContent = "Invalid file type. Please upload a PDF.";
@@ -135,20 +147,14 @@
         });
 
         pdfForm.addEventListener('submit', async (event) => {
-            console.log("CLICK");
             event.preventDefault();
+
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
             if (!pdfFile.files || pdfFile.files.length === 0) {
                 fileError.textContent = "Please select a PDF file.";
                 fileError.style.display = "block";
                 return;
-            }
-            if (!pdfFile.files[0].type === 'application/pdf') {
-                fileError.textContent = "Invalid file type. Please upload a PDF.";
-                fileError.style.display = "block";
-                return;
-            } else {
-                fileError.style.display = "none";
             }
 
             const pageNumbersValue = pageNumbersInput.value.trim();
@@ -170,15 +176,13 @@
             formdata.append("file", pdfFile.files[0]);
             formdata.append("pages", pageNumbersValue);
 
-            const requestOptions = {
-                method: "POST",
-                body: formdata,
-                redirect: "follow"
-            };
-
-            fetch('http://localhost:8000/api/extract-pages', {
+            fetch('/api/extract-pages', {
                 method: 'POST',
                 body: formdata,
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+                credentials: 'same-origin'
             })
             .then(response => {
                 if (!response.ok) {
@@ -189,7 +193,7 @@
             .then(blob => {
                 const url = URL.createObjectURL(blob);
                 downloadLink.href = url;
-                downloadLink.download = 'extracted.pdf';
+                downloadLink.download =  'extract_' + pdfFile.files[0].name;
                 uploadMessage.textContent = "PDF uploaded and pages extracted successfully!";
                 uploadMessage.style.display = "block";
                 downloadSection.style.display = 'block';
@@ -200,16 +204,6 @@
                 uploadMessage.style.display = "block";
             });
         });
-
-        function isValidPageRange(pageRange) {
-            const ranges = pageRange.split(',');
-            for (const range of ranges) {
-                if (!range.match(/^\d+$/) && !range.match(/^\d+-\d+$/)) {
-                    return false;
-                }
-            }
-            return true;
-        }
     </script>
 </body>
 </html>

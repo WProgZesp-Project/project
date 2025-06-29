@@ -22,7 +22,7 @@ from .views.login import UserLoginView
 from .views.logout import UserLogoutView 
 
 from .views.extract_pdf_view import ExtractPagesView
-from .views.operation_history_view import history_fragment, history_page
+from .views.operation_history import history_fragment, history_page, OperationHistoryView
 from .views.dashboard_view import DashboardView
 from .views.compress_and_zip import compress_and_zip
 
@@ -63,6 +63,7 @@ urlpatterns = [
     path('api/extract-pages', ExtractPagesView.as_view(), name='extract-pages'),
     path('history/', history_page, name='history'),
     path('history/fragment/', history_fragment, name='history_fragment'),
+    path('api/history/', OperationHistoryView.as_view(), name='api-history'),
     path('split/', SplitPDFTemplateView.as_view(), name='split_pdf_page'),
     path("api/split/", SplitPDFView.as_view(), name="split_pdf"),
     path('compress/', compress_and_zip, name='compress_and_zip'),

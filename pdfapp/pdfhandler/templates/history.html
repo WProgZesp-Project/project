@@ -1,54 +1,60 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Historia operacji | PDFApp</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/buttons.css' %}">
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
   <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+
   <style>
-    body {
-      font-family: sans-serif;
-      background: #90B8D6;
-      color: #333;
-      margin: 0;
-      padding: 0;
-    }
-
-    .history-container {
+    .history-section {
       background: #fff;
-      max-width: 600px;
-      margin: 5% auto;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-width: 1000px;
+      margin: 4% auto;
+      padding: 2.5rem 3rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
     }
 
-    .history-container h2 {
-      color: #639EE;
+    .history-section h2 {
+      color: #6395EE;
       text-align: center;
-      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 2rem;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 1rem;
+      font-size: 1rem;
     }
 
     th, td {
-      padding: 0.75rem;
-      border-bottom: 1px solid #ccc;
+      padding: 1rem;
+      border-bottom: 1px solid #ddd;
       text-align: left;
     }
 
     th {
-      background: #f0f0f0;
+      background: #f8f8f8;
+      font-weight: 600;
+      color: #444;
+    }
+
+    td {
+      vertical-align: top;
     }
 
     .download-link {
-      color: #639EE;
+      color: #6395EE;
       text-decoration: none;
-      font-weight: bold;
-      font-size: 1.2rem;
+      font-weight: 500;
     }
 
     .download-link:hover {
@@ -58,18 +64,74 @@
     .no-history {
       text-align: center;
       color: #777;
-      padding: 1rem;
+      padding: 1.5rem;
+      font-style: italic;
     }
   </style>
 </head>
 <body>
-  <div class="history-container" id="main-content">
-    <h2>Twoje ostatnie operacje</h2>
+  <div class="top-bar">
+    <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo">
 
+    {% if authenticated %}
+      <div class="auth-buttons">
+        <a href="{% url 'index' %}" class="btn btn-auth">Operations</a>
+        <a href="#" id="logoutButton" class="btn btn-auth">Logout</a>
+      </div>
+    {% else %}
+      <div class="auth-buttons">
+        <a href="{% url 'login' %}" class="btn btn-auth">Login</a>
+        <a href="{% url 'register' %}" class="btn btn-auth">Register</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="history-section" id="main-content">
+    <h2>Your operation history</h2>
     <div id="history-list" hx-get="{% url 'history_fragment' %}" hx-trigger="load" hx-swap="innerHTML">
-      <!-- Tu załaduje się fragment z historią -->
-      <p>Ładowanie historii...</p>
+      <p>Loading operation history...</p>
     </div>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const logoutButton = document.getElementById('logoutButton');
+      if (logoutButton) {
+        logoutButton.addEventListener('click', function(e) {
+          e.preventDefault();
+
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = "{% url 'logout' %}";
+
+          const csrfInput = document.createElement('input');
+          csrfInput.type = 'hidden';
+          csrfInput.name = 'csrfmiddlewaretoken';
+          csrfInput.value = getCookie('csrftoken');
+          form.appendChild(csrfInput);
+
+          document.body.appendChild(form);
+          form.submit();
+        });
+      }
+
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+    });
+  </script>
 </body>
 </html>
