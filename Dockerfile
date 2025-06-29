@@ -17,6 +17,10 @@ RUN pip install --upgrade pip && \
 
 COPY . .
 
-RUN python pdfapp/manage.py migrate
+ARG ENV=PROD
+ENV ENV=${ENV}
 
-CMD ["python", "pdfapp/manage.py", "runserver", "0.0.0.0:8000"]
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
