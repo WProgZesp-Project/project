@@ -4,6 +4,7 @@ from django.views.decorators.http import require_POST
 from PyPDF2 import PdfReader, PdfWriter
 from django.shortcuts import render
 from ..models import OperationHistory, OperationType
+from ..views.operation_history import save_operation
 import tempfile
 import os
 
@@ -57,20 +58,18 @@ def remove_pdf_pages(request):
             writer.write(temp_out)
             temp_out_path = temp_out.name
 
+        new_filename = f'{OperationType.REMOVE_PAGES}_{pdf_file.name}'
+        
         if request.user.is_authenticated:
-            OperationHistory.objects.create(
-                user=request.user,
-                operation_type=OperationType.REMOVE_PAGES,
-                input_filenames=[pdf_file.name],
-                result_filename=os.path.basename(temp_out_path)
-            )
+            save_operation(request, temp_out_path, OperationType.REMOVE_PAGES, [pdf_file.name], new_filename)
+
 
         return FileResponse(
             open(
                 temp_out_path,
                 'rb'),
             as_attachment=True,
-            filename='removed-pages.pdf')
+            filename=new_filename)
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
