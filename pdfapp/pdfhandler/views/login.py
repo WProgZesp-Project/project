@@ -53,18 +53,17 @@ class UserLoginView(generics.GenericAPIView):
         try:
             user_obj = User.objects.get(email=email)
             user = authenticate(username=user_obj.username, password=password)
-
-            if not user:
-                return self._handle_error_response(
-                    request, "Invalid password.", status.HTTP_401_UNAUTHORIZED)
-
-            if not user.is_active:
+            if not user_obj.is_active:
                 return self._handle_error_response(
                     request,
                     "Account is not activated yet. Please check your email and "
                     "click the verification link we sent you.",
                     status.HTTP_403_FORBIDDEN
                 )
+
+            if not user:
+                return self._handle_error_response(
+                    request, "Invalid password.", status.HTTP_401_UNAUTHORIZED)
 
             login(request, user)
             return self._handle_success_response(request)
