@@ -8,7 +8,7 @@ class OperationType(models.TextChoices):
     EXTRACT = 'extract', "Extract"
     REMOVE_PAGES = 'remove_pages', "Remove Pages"
     REMOVE_PASSWORD = "remove_password", "Remove Password"
-    COMPRESS_AND_ZIP = "compress_and_zip", "Compress to ZIP"
+    COMPRESS_AND_ZIP = "compress", "Compress to ZIP"
 
 
 def user_operation_path(instance, filename):

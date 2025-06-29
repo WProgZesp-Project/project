@@ -4,6 +4,7 @@ from django.views.decorators.http import require_POST
 from django.shortcuts import render
 from PyPDF2 import PdfReader, PdfWriter
 from ..models import OperationHistory, OperationType
+from ..views.operation_history import save_operation, OperationType
 import tempfile
 import os
 
@@ -47,12 +48,7 @@ def remove_pdf_password(request):
         return JsonResponse({'error': error}, status=400)
 
     if request.user.is_authenticated:
-        OperationHistory.objects.create(
-            user=request.user,
-            operation_type=OperationType.REMOVE_PASSWORD,
-            input_filenames=[pdf_file.name],
-            result_filename=os.path.basename(temp_out_path)
-        )
+        save_operation(request, temp_out_path, OperationType.REMOVE_PASSWORD, [pdf_file.name])
 
     response = FileResponse(
         open(

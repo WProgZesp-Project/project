@@ -1,6 +1,7 @@
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from ..views.operation_history import save_operation, OperationType
 from PyPDF2 import PdfMerger
 import tempfile
 import os
@@ -39,11 +40,15 @@ def merge_pdfs(request):
         filenames.append(f.name)
 
     temp_dir = tempfile.mkdtemp()
-    merged_filename = 'merged.pdf'
+    first_filename = os.path.splitext(filenames[0])[0]
+    merged_filename = f'merge_{first_filename}.pdf'
     temp_out_path = os.path.join(temp_dir, merged_filename)
     print(f"Writing merged PDF to: {temp_out_path}")
     merger.write(temp_out_path)
     merger.close()
+
+    if request.user.is_authenticated:
+        save_operation(request, temp_out_path, OperationType.MERGE, filenames)
 
     final_path = os.path.join(settings.MEDIA_ROOT, merged_filename)
     print(f"Moving merged PDF to: {final_path}")
@@ -59,6 +64,8 @@ def merge_pdfs(request):
         'message': 'PDFs merged successfully!',
         'merged_pdf_url': merged_pdf_url
     })
+
+
     time.sleep(2)
     return HttpResponse(html)
 

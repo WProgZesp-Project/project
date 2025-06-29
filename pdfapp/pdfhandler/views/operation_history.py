@@ -6,11 +6,27 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from ..models import OperationHistory, OperationType
 from ..serializers.history_serializer import OperationHistorySerializer
-
+from django.core.files.base import ContentFile
 
 # --- Funkcja pomocnicza do zapisu operacji ---
 def save_operation(request, file, operation_type, input_filenames):
-    if request.user.is_authenticated:
+    if operation_type in [OperationType.COMPRESS_AND_ZIP, OperationType.SPLIT]:
+        if hasattr(file, 'getvalue'):
+            django_file = ContentFile(file.getvalue())
+        elif isinstance(file, ContentFile):
+            django_file = file
+        else:
+            django_file = ContentFile(file.read())
+
+        django_file.name = f'{input_filenames[0][:-4]}.zip'
+        
+        OperationHistory.objects.create(
+            user=request.user,
+            operation_type=operation_type,
+            input_filenames=input_filenames,
+            result_file=django_file
+        )
+    else:
         with open(file, 'rb') as f:
             django_file = File(f)
             django_file.name = os.path.basename(input_filenames[0]) 
@@ -20,6 +36,7 @@ def save_operation(request, file, operation_type, input_filenames):
                 input_filenames=input_filenames,
                 result_file=django_file
             )
+        
 
 # --- Widok HTML ---
 def history_page(request):

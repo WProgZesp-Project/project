@@ -1,5 +1,7 @@
 import io
 import os
+import zipfile
+import tempfile
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -9,8 +11,10 @@ from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django.shortcuts import render
 from django.conf import settings
+from django.core.files.base import ContentFile
 from PyPDF2 import PdfReader, PdfWriter
 from ..serializers.serializers_split import SplitPDFSerializer
+from ..views.operation_history import save_operation, OperationType
 
 
 class SplitPDFTemplateView(TemplateView):
@@ -19,9 +23,6 @@ class SplitPDFTemplateView(TemplateView):
 
 class SplitPDFView(APIView):
     parser_classes = [MultiPartParser]
-
-    def get(self, request):
-        return render(request, 'pdfhandler/split_pdf.html')
 
     def parse_ranges(self, ranges_str, total_pages):
         ranges = []
@@ -55,6 +56,7 @@ class SplitPDFView(APIView):
             # Track which pages have been included
             included_pages = set()
             download_links = []
+            generated_files = []
 
             os.makedirs(settings.MEDIA_ROOT, exist_ok=True)
 
@@ -73,6 +75,8 @@ class SplitPDFView(APIView):
 
                 with open(save_path, 'wb') as f:
                     f.write(output_stream.read())
+
+                generated_files.append((filename, open(save_path, 'rb').read()))
 
                 file_url = f"{settings.MEDIA_URL}{filename}"
                 download_links.append(
@@ -97,6 +101,7 @@ class SplitPDFView(APIView):
                 save_path = os.path.join(settings.MEDIA_ROOT, rest_filename)
                 with open(save_path, 'wb') as f:
                     f.write(output_stream.read())
+                generated_files.append((rest_filename, open(save_path, 'rb').read()))
 
                 rest_file_url = f"{settings.MEDIA_URL}{rest_filename}"
                 download_links.append(
@@ -104,9 +109,29 @@ class SplitPDFView(APIView):
                     f'<a href="{rest_file_url}" download class="btn">'
                     f'Download split_rest.pdf</a></div>'
                 )
+
+            if request.user.is_authenticated:
+                zip_stream = io.BytesIO()
+                with zipfile.ZipFile(zip_stream, 'w', zipfile.ZIP_DEFLATED) as zipf:
+                    for fname, fdata in generated_files:
+                        zipf.writestr(fname, fdata)
+                zip_stream.seek(0)
+
+                content_file = ContentFile(zip_stream.read())
+                content_file.name = "split_result.zip"
+
+                save_operation(
+                    request,
+                    content_file,
+                    OperationType.SPLIT,
+                    [pdf_file.name]
+                )
+
             return HttpResponse('''
                 <p style="font-weight:bold;">Your PDF has been split successfully!</p>
                 {}
             '''.format('<br>'.join(download_links)))
+        
+        
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

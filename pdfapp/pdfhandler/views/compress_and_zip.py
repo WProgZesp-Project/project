@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from ..models import OperationHistory, OperationType
+from ..views.operation_history import save_operation, OperationType
+
 import io
 import os
 import zipfile
@@ -22,19 +24,15 @@ def compress_and_zip(request):
         zip_buffer.seek(0)
         zip_data = zip_buffer.read()
 
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        unique_filename = f"compressed_{timestamp}.zip"
-        if request.user.is_authenticated:
-            OperationHistory.objects.create(
-                user=request.user,
-                operation_type=OperationType.COMPRESS_AND_ZIP,
-                input_filenames=filenames,
-                result_filename=unique_filename
-            )
+        #timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        unique_filename = f"compress_{filenames[0][:-4]}.zip"
 
+        if request.user.is_authenticated:
             media_path = os.path.join(settings.MEDIA_ROOT, unique_filename)
             with open(media_path, "wb") as f:
                 f.write(zip_data)
+
+            save_operation(request, zip_buffer, OperationType.COMPRESS_AND_ZIP, filenames)
 
         response = HttpResponse(zip_data, content_type='application/zip')
         response['Content-Disposition'] = f'attachment; filename="{unique_filename}"'
