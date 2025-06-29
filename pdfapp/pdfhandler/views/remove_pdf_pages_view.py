@@ -13,22 +13,24 @@ def remove_pdf_pages_view(request):
     return render(request, 'remove_pages.html')
 
 
-def parse_page_ranges(page_string):
-    page_nums = set()
-    parts = page_string.split(',')
-    for part in parts:
+def parse_page_ranges(pages_str, total_pages):
+    pages_to_remove = set()
+    for part in pages_str.split(','):
         if '-' in part:
             start, end = map(int, part.split('-'))
-            page_nums.update(range(start - 1, end))
+            start = max(1, start)
+            end = min(total_pages, end)
+            pages_to_remove.update(range(start - 1, end))
         else:
-            page_nums.add(int(part) - 1)
-    return page_nums
+            page = int(part) - 1
+            if 0 <= page < total_pages:
+                pages_to_remove.add(page)
+    return pages_to_remove
 
 
 def validate_pdf_and_pages(pdf_file, pages_str):
     if not pdf_file or not pages_str:
-        return None, None, JsonResponse(
-            {'error': 'PDF file and pages to remove are required.'}, status=400)
+        return None, None, JsonResponse({'error': 'PDF file and pages to remove are required.'}, status=400)
     try:
         reader = PdfReader(pdf_file)
         total_pages = len(reader.pages)
@@ -72,53 +74,28 @@ def remove_pdf_pages(request):
         if error:
             return error
 
-        pages_to_remove, error = validate_page_numbers(pages_str, total_pages)
-        if error:
-            return error
+        pages_to_remove = parse_page_ranges(pages_str, total_pages)
+
+        if not pages_to_remove:
+            return JsonResponse({'error': 'No valid pages to remove.'}, status=400)
+        if len(pages_to_remove) >= total_pages:
+            return JsonResponse({'error': 'Cannot remove all pages from the PDF.'}, status=400)
 
         writer = PdfWriter()
         for i in range(total_pages):
             if i not in pages_to_remove:
                 writer.add_page(reader.pages[i])
 
-        if len(writer.pages) < 1:
-            return JsonResponse(
-                {'error': 'Cannot remove all pages from the PDF file.'}, status=400)
-
         with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_out:
             writer.write(temp_out)
             temp_out_path = temp_out.name
 
         if request.user.is_authenticated:
-            OperationHistory.objects.create(
-                user=request.user,
-                operation_type=OperationType.REMOVE_PAGES,
-                input_filenames=[pdf_file.name],
-                result_filename=os.path.basename(temp_out_path)
-            )
+            save_operation(request, temp_out_path, OperationType.REMOVE_PAGES, [pdf_file.name])
+        else:
+            save_operation_temp(temp_out_path, OperationType.REMOVE_PAGES, [pdf_file.name])
 
-            for i in range(total_pages):
-                if i not in pages_to_remove:
-                    writer.add_page(reader.pages[i])
-
-            if len(writer.pages) < 1:
-                return JsonResponse(
-                    {'error': 'Cannot remove all pages from the PDF file.'}, status=400)
-
-            with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_out:
-                writer.write(temp_out)
-                temp_out_path = temp_out.name
-            
-            if not request.user.is_authenticated:
-                save_operation_temp(temp_out_path, OperationType.REMOVE_PAGES, [pdf_file.name])
-            else:
-                save_operation(request, temp_out_path, OperationType.REMOVE_PAGES, [pdf_file.name])
-
-            return FileResponse(
-                open(
-                    temp_out_path,
-                    'rb'),
-                as_attachment=True)
+        return FileResponse(open(temp_out_path, 'rb'), as_attachment=True)
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
