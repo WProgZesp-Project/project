@@ -67,7 +67,7 @@ jobs:
     - name: Run Django tests
       working-directory: ./pdfapp
       run: |
-        export PYTHONPATH=$(pwd)/..
+        export PYTHONPATH=$PYTHONPATH:$(pwd)
         pytest
 
   deploy:
