@@ -11,6 +11,13 @@ class UserLoginView(generics.GenericAPIView):
     serializer_class = UserLoginSerializer
     permission_classes = [permissions.AllowAny]
 
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            if request.headers.get("Hx-Request"):
+                return HttpResponse('<div class="info">Already logged in.</div>', status=403)
+            return redirect('/')
+        return super().dispatch(request, *args, **kwargs)
+
     def get(self, request):
         return render(request, 'login.html')
 
