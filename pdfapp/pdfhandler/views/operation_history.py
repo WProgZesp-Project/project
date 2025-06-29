@@ -7,6 +7,7 @@ from rest_framework import status, permissions
 from ..models import OperationHistory, OperationType
 from ..serializers.history_serializer import OperationHistorySerializer
 from django.core.files.base import ContentFile
+from django.contrib.auth.decorators import login_required
 
 # --- Funkcja pomocnicza do zapisu operacji ---
 def save_operation(request, file, operation_type, input_filenames):
@@ -19,7 +20,7 @@ def save_operation(request, file, operation_type, input_filenames):
             django_file = ContentFile(file.read())
 
         django_file.name = f'{input_filenames[0][:-4]}.zip'
-        
+
         OperationHistory.objects.create(
             user=request.user,
             operation_type=operation_type,
@@ -39,8 +40,11 @@ def save_operation(request, file, operation_type, input_filenames):
         
 
 # --- Widok HTML ---
+@login_required
 def history_page(request):
-    return render(request, "history.html")
+    return render(request, 'history.html', {
+        'authenticated': request.user.is_authenticated
+    })
 
 
 def history_fragment(request):
