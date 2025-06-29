@@ -7,7 +7,6 @@ from django.shortcuts import render
 from PyPDF2 import PdfReader, PdfWriter
 from ..views.operation_history import save_operation, save_operation_temp, OperationType
 import tempfile
-import os
 
 
 class ExtractPagesView(generics.GenericAPIView):

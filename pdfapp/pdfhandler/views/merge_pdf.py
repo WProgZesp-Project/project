@@ -1,14 +1,12 @@
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from ..views.operation_history import save_operation, save_operation_temp, OperationType
-from PyPDF2 import PdfMerger
-import tempfile
-import os
-from django.conf import settings
-import shutil
 from django.shortcuts import render
 from django.template.loader import render_to_string
+from ..views.operation_history import save_operation, save_operation_temp, OperationType
+from PyPDF2 import PdfMerger
+
+import tempfile
 import time
 
 
@@ -38,8 +36,6 @@ def merge_pdfs(request):
         print(f"Appending file: {f.name}")
         merger.append(f)
         filenames.append(f.name)
-
-    first_filename = os.path.splitext(filenames[0])[0]
 
     with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp:
         merger.write(temp)

@@ -3,10 +3,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.shortcuts import render
 from PyPDF2 import PdfReader, PdfWriter
-from ..models import OperationHistory, OperationType
 from ..views.operation_history import save_operation, save_operation_temp, OperationType
 import tempfile
-import os
 
 
 def remove_password_page(request):

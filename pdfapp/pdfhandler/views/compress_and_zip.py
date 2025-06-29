@@ -1,15 +1,11 @@
-from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
-from ..models import OperationHistory, OperationType
 from ..views.operation_history import save_operation, OperationType
 from ..storages import DownloadableS3Storage
 
 import io
-import os
 import zipfile
-from datetime import datetime
 from django.core.files.base import ContentFile
 
 
