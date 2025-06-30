@@ -4,10 +4,10 @@
 # np. za pomocą wait-for-it.sh albo podobnego skryptu
 
 echo "Uruchamianie migracji bazy danych..."
-python manage.py migrate
+python pdfapp/manage.py migrate
 
 echo "Zbieranie statycznych plików..."
-python manage.py collectstatic --noinput
+python pdfapp/manage.py collectstatic --noinput
 
 echo "Uruchamianie serwera..."
 exec "$@"
