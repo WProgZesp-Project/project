@@ -145,10 +145,16 @@ jobs:
           pip install -r requirements.txt
           python pdfapp/manage.py collectstatic --noinput
 
-      - name: Build & Push Nginx Docker image
+      - name: Prepare static files for nginx build
         run: |
-          docker build -t $NGINX_IMAGE_URI -f nginx/Dockerfile .
-          docker push $NGINX_IMAGE_URI
+          rm -rf nginx/staticfiles
+          mkdir -p nginx/staticfiles
+          cp -r pdfapp/staticfiles/* nginx/staticfiles/
+
+- name: Build & Push Nginx Docker image
+  run: |
+    docker build -t $NGINX_IMAGE_URI -f nginx/Dockerfile nginx/
+    docker push $NGINX_IMAGE_URI
 
       - name: Render ECS task definition
         id: render-task-def
