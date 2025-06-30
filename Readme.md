@@ -4,7 +4,7 @@ PdfApp to aplikacja Django służąca do obsługi plików Pdf. Będzie umożliwi
 
 ## Wymagania
 
-- Python 3.x
+- Python 3.10
 
 ## Instrukcja uruchomienia
 
@@ -28,58 +28,36 @@ pip install -r requirements.txt
 ```
 
 ### 4. Lokalna baza danych
-Aby lokalnie postawić kontener PostgreSQL, można użyć Dockera. Upewnij się, że Docker jest zainstalowany i uruchomiony na twoim systemie.
+Aby lokalnie postawić kontener PostgreSQL, można użyć Dockera. Upewnij się, że Docker jest zainstalowany i uruchomiony na twoim systemie. W razie problemów z połączniem sprawdź, czy instancja postgres nie jest uruchomiona lokalnie - nie może być jeśli chcesz połączyć się przez dockera.
 ```bash
 docker run --name pdf-postgres     -e POSTGRES_DB=pdfdb     -e POSTGRES_USER=pdfuser     -e POSTGRES_PASSWORD=pdfpass     -p 5432:5432     -d postgres:14
 ```
-Następnie, aby połączyć się z bazą danych PostgreSQL z aplikacji Django, należy użyć lokalnych zmiennych środowiskowych:
+
+### 5. Ustawienie zmiennych środowiskowych
+W project/ należy stworzyć plik .env ze zmiennymi SECRET_KEY, AWS_STORAGE_BUCKET_NAME, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY. Dodatkowo, aby obsługa email działała, należy dodać zmienne środowiskowe:
 ```
-POSTGRES_DB=pdfdb
-POSTGRES_USER=pdfuser
-POSTGRES_PASSWORD=pdfpass
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
+EMAIL=progzesppdf@gmail.com
+EMAIL_PASS=tztgdqxdykuppjop
+```
+Aby nie musieć za każdą rejestracją potwierdzać maila, należy ustawić zmienną środowiskową:
+```
+TEST=true
 ```
 
-### 5. Tworzenie migracji
+### 6. Tworzenie migracji
 
 ```bash
 cd pdfapp
 python manage.py migrate
 ```
 
-### 6. Uruchomienie serwera
+### 7. Uruchomienie serwera
 ```bash
 python manage.py runserver
 ```
-
-### 7. Obsługa email
-Aby obsługa email działała, należy dodać zmienne środowiskowe:
-```
-EMAIL=progzesppdf@gmail.com
-EMAIL_PASS=tztgdqxdykuppjop
-```
-
-Aby maile faktycznie się wysyłały należy ustawić 'TEST' w .env na 'false'. Jeśli 'TEST' jest ustawione na 'true', to ta funkcjonalność będzie mimickowana. 
-
-### 8. Lokalne testowanie
-Aby nie musieć za każdą rejestracją potwierdzać maila, należy ustawić zmienną środowiskową:
-```
-TEST=true
-```
-
 Po uruchomieniu aplikacja będzie dostępna pod adresem http://127.0.0.1:8000/.
 
-
-### 9. Ekstrakcja stron
-Estrakcja wybranych stron z pliku pdf
-
-url: `api/extract-pages`
-
-method: POST
-
-body: file: plik, pages: strony, np. 1,3,5-7,9
-## Endpoints
+## Endpointy
 
 ### Frontend
 `/remove-password`
@@ -88,8 +66,6 @@ body: file: plik, pages: strony, np. 1,3,5-7,9
 `/api/merge-pdfs `- endpoint do mergowania plików pdf  
 `/api/remove-password` - endpoint do usuwania hasła dla pliku pdf   
 `/api/remove-pages` - endpoint do usuwania stron z pliku pdf   
-
-
 
 ### 9. Ekstrakcja stron
 Estrakcja wybranych stron z pliku pdf
