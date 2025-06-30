@@ -79,7 +79,7 @@ jobs:
     env:
       AWS_ACCOUNT_ID: 384782264249
       AWS_REGION:    eu-north-1
-      ECR_REPOSITORY:    ${{ secrets.ECR_REPOSITORY }}
+      ECR_REPOSITORY:    pdfapp
       ECS_CLUSTER:       ${{ secrets.ECS_CLUSTER }}
       ECS_SERVICE_NAME:  ${{ secrets.ECS_SERVICE_NAME }}
       ECS_TASK_FAMILY:   ${{ secrets.ECS_TASK_FAMILY }}
