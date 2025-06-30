@@ -110,19 +110,25 @@ jobs:
           fi
 
       - name: Set image tags
+        id: set-tags
         run: |
-          # tagujemy obrazy z różnymi suffixami, ale w tym samym repozytorium
           DJANGO_IMAGE_TAG="django-${GITHUB_SHA}"
           NGINX_IMAGE_TAG="nginx-${GITHUB_SHA}"
-
-          echo "DJANGO_IMAGE_TAG=$DJANGO_IMAGE_TAG" >> $GITHUB_ENV
-          echo "NGINX_IMAGE_TAG=$NGINX_IMAGE_TAG" >> $GITHUB_ENV
 
           DJANGO_IMAGE_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${DJANGO_IMAGE_TAG}"
           NGINX_IMAGE_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${NGINX_IMAGE_TAG}"
 
           echo "DJANGO_IMAGE_URI=$DJANGO_IMAGE_URI" >> $GITHUB_ENV
           echo "NGINX_IMAGE_URI=$NGINX_IMAGE_URI" >> $GITHUB_ENV
+
+          # Ustaw outputy kroków
+          echo "::set-output name=django_image_uri::$DJANGO_IMAGE_URI"
+          echo "::set-output name=nginx_image_uri::$NGINX_IMAGE_URI"
+
+      - name: Debug image URIs from outputs
+        run: |
+          echo "DJANGO_IMAGE_URI=${{ steps.set-tags.outputs.django_image_uri }}"
+          echo "NGINX_IMAGE_URI=${{ steps.set-tags.outputs.nginx_image_uri }}"
 
       - name: Login to Amazon ECR
         run: |
@@ -148,7 +154,7 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: django
-          image: ${{ env.DJANGO_IMAGE_URI }}
+          image: ${{ steps.set-tags.outputs.django_image_uri }}
           environment-variables: |
             DJANGO_SETTINGS_MODULE=pdfapp.settings.prod
             POSTGRES_DB=${{ secrets.POSTGRES_DB }}
@@ -166,7 +172,7 @@ jobs:
         with:
           task-definition: ${{ steps.render-task-def.outputs.task-definition }}
           container-name: nginx
-          image: ${{ env.NGINX_IMAGE_URI }}
+          image: ${{ steps.set-tags.outputs.nginx_image_uri }}
           
       - name: Deploy to ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
