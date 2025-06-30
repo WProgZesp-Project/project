@@ -9,7 +9,7 @@ from pdfhandler.views.remove_pdf_pages_view import remove_pdf_pages, remove_pdf_
 from pdfhandler.views.login import UserLoginView
 from pdfhandler.views.logout import UserLogoutView
 from pdfhandler.views.extract_pdf_view import ExtractPagesView
-from pdfapp.pdfhandler.views.operation_history import history_fragment, history_page
+from pdfhandler.views.operation_history import history_fragment, history_page
 from pdfhandler.views.dashboard_view import DashboardView
 
 
