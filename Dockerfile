@@ -17,6 +17,9 @@ RUN pip install --upgrade pip && \
 
 COPY . .
 
-RUN python pdfapp/manage.py migrate
+RUN python pdfapp/manage.py migrate --noinput
+RUN python pdfapp/manage.py collectstatic --noinput
 
-CMD ["python", "pdfapp/manage.py", "runserver", "0.0.0.0:8000"]
+ENV PYTHONUNBUFFERED=1
+
+CMD ["gunicorn", "pdfapp.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "4"]
