@@ -25,6 +25,9 @@ from .views.extract_pdf_view import ExtractPagesView
 from .views.operation_history import history_fragment, history_page, OperationHistoryView
 from .views.dashboard_view import DashboardView
 from .views.compress_and_zip import compress_and_zip
+from .views.add_password_view import (
+    add_pdf_password, add_password_page
+)
 
 urlpatterns = [
     path('', DashboardView.as_view(), name='index'),
@@ -67,5 +70,7 @@ urlpatterns = [
     path('split/', SplitPDFTemplateView.as_view(), name='split_pdf_page'),
     path("api/split/", SplitPDFView.as_view(), name="split_pdf"),
     path('compress/', compress_and_zip, name='compress_and_zip'),
+    path('add-password/', add_password_page, name='add_password_page'),
+    path('add-password/api/', add_pdf_password, name='add_pdf_password'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
