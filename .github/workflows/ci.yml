@@ -139,6 +139,12 @@ jobs:
           docker build -t $DJANGO_IMAGE_URI -f Dockerfile .
           docker push $DJANGO_IMAGE_URI
 
+      - name: Collect static files for nginx
+        run: |
+          export DJANGO_SETTINGS_MODULE=pdfapp.settings.prod
+          pip install -r requirements.txt
+          python pdfapp/manage.py collectstatic --noinput
+
       - name: Build & Push Nginx Docker image
         run: |
           docker build -t $NGINX_IMAGE_URI -f nginx/Dockerfile .
