@@ -121,10 +121,6 @@ jobs:
           echo "DJANGO_IMAGE_URI=$DJANGO_IMAGE_URI" >> $GITHUB_ENV
           echo "NGINX_IMAGE_URI=$NGINX_IMAGE_URI" >> $GITHUB_ENV
 
-          # Ustaw outputy kroków
-          echo "::set-output name=django_image_uri::$DJANGO_IMAGE_URI"
-          echo "::set-output name=nginx_image_uri::$NGINX_IMAGE_URI"
-
       - name: Debug image URIs from outputs
         run: |
           echo "DJANGO_IMAGE_URI=${{ steps.set-tags.outputs.django_image_uri }}"
@@ -154,7 +150,7 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: django
-          image: ${{ steps.set-tags.outputs.django_image_uri }}
+          image: ${{ env.DJANGO_IMAGE_URI }}
           environment-variables: |
             DJANGO_SETTINGS_MODULE=pdfapp.settings.prod
             POSTGRES_DB=${{ secrets.POSTGRES_DB }}
@@ -166,14 +162,14 @@ jobs:
             EMAIL_PASS=${{ secrets.EMAIL_PASS }}
             SECRET_KEY=${{ secrets.SECRET_KEY }}
 
-      - name: Render Nginx image update
+      - name: Render ECS task definition for Nginx
         id: render-task-def-nginx
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ${{ steps.render-task-def.outputs.task-definition }}
           container-name: nginx
-          image: ${{ steps.set-tags.outputs.nginx_image_uri }}
-          
+          image: ${{ env.NGINX_IMAGE_URI }}
+
       - name: Deploy to ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
