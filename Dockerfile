@@ -17,9 +17,9 @@ RUN pip install --upgrade pip && \
 
 COPY . .
 
-RUN python pdfapp/manage.py migrate --noinput
-RUN python pdfapp/manage.py collectstatic --noinput
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-ENV PYTHONUNBUFFERED=1
+ENTRYPOINT ["/entrypoint.sh"]
 
-CMD ["gunicorn", "pdfapp.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "4"]
+CMD ["gunicorn", "pdfapp.wsgi:application", "--bind", "0.0.0.0:8000"]
