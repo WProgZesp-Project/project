@@ -1,7 +1,7 @@
 #!/bin/sh
 
 export PYTHONPATH=/app/pdfapp
-export DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-pdfapp.settings.staging}
+export DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-pdfapp.settings.prod}
 
 echo "Using settings module: $DJANGO_SETTINGS_MODULE"
 
