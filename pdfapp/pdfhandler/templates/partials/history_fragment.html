@@ -1,0 +1,30 @@
+{% if operations %}
+  <table>
+    <thead>
+      <tr>
+        <th>Operation</th>
+        <th>Input files</th>
+        <th>Date</th>
+        <th>Download</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for op in operations %}
+      <tr>
+        <td>{{ op.get_operation_type_display }}</td>
+        <td>
+          {% for file in op.input_filenames %}
+            {{ file }}{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        </td>
+        <td>{{ op.created_at|date:"Y-m-d H:i" }}</td>
+        <td>
+           <a href="{{ op.result_file.url }}" download title="Download">📥</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="no-history">No operations to display.</div>
+{% endif %}

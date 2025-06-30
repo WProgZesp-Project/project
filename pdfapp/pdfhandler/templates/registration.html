@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up | PDFApp</title>
+  <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #90B8D6;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    .register {
+      background: #fff;
+      max-width: 400px;
+      margin: 5% auto;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .register h2 {
+      color: #639EEC;
+      text-align: center;
+    }
+    .register label {
+      display: block;
+      margin: .5rem 0 .2rem;
+    }
+    .register input {
+      width: 100%;
+      padding: .5rem;
+      border: 1px solid #88CFA8;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .register button {
+      margin-top: 1rem;
+      width: 100%;
+      padding: .6rem;
+      background: #85DECB;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+    }
+    .register button:hover {
+      background: #78cbb0;
+      transform: translateY(-1px);
+    }
+    .login-text {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 1.1rem;
+      color: #333;
+    }
+    .login-text .login-link {
+      display: inline-block;
+      margin-left: .5rem;
+      padding: .6rem 1rem;
+      background: #85DECB;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+    }
+    .login-text .login-link:hover {
+      background: #78cbb0;
+      transform: translateY(-1px);
+    }
+    .error {
+      color: red;
+      margin-top: .5rem;
+    }
+    .password-requirements {
+      font-size: 0.85rem;
+      color: #777;
+      margin: 0.25rem 0 0.75rem 0;
+    }
+    .password-requirements ul {
+      padding-left: 1.5rem;
+      margin: 0.25rem 0;
+    }
+    .valid-requirement {
+      color: green;
+    }
+    .invalid-requirement {
+      color: #b00;
+    }
+  </style>
+</head>
+<body>
+  <div class="register">
+    <h2>Sign Up</h2>
+    <div id="registration-error">
+      {% if errors %}
+        <ul class="error">
+          {% for field, msgs in errors.items %}
+            {% for msg in msgs %}
+              <li>{{ msg }}</li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+    <form
+      id="registration-form"
+      onsubmit="submitForm(event)">
+      {% csrf_token %}
+      <label for="id_username">Username</label>
+      <input type="text" id="id_username" name="username" required>
+      
+      <label for="id_email">Email</label>
+      <input type="email" id="id_email" name="email" required>
+      
+      <label for="id_password">Password</label>
+      <input type="password" id="id_password" name="password" required oninput="checkPasswordRequirements()">
+      
+      <div class="password-requirements">
+        Password requirements:
+        <ul>
+          <li id="req-length">At least 8 characters</li>
+          <li id="req-uppercase">At least one uppercase letter</li>
+          <li id="req-lowercase">At least one lowercase letter</li>
+          <li id="req-number">At least one number</li>
+          <li id="req-special">At least one special character</li>
+        </ul>
+      </div>
+      
+      <label for="id_password2">Confirm Password</label>
+      <input type="password" id="id_password2" name="password2" required oninput="checkPasswordMatch()">
+      <div id="password-match-message"></div>
+      
+      <button type="submit" id="submit-btn">Create Account</button>
+    </form>
+    <p class="login-text">
+      Already have an account?
+      <a class="login-link" href="{% url 'login' %}">Log in</a>
+    </p>
+  </div>
+
+  <script>
+    // Email validation
+    document.getElementById('id_email').addEventListener('blur', function() {
+      const email = this.value;
+      if (!isValidEmail(email)) {
+        showError("Please enter a valid email address");
+      } else {
+        // Clear error if email format is valid
+        document.getElementById('registration-error').innerHTML = '';
+      }
+    });
+
+    // Check if passwords match
+    function checkPasswordMatch() {
+      const password = document.getElementById('id_password').value;
+      const password2 = document.getElementById('id_password2').value;
+      const message = document.getElementById('password-match-message');
+      
+      if (password2 === '') {
+        message.textContent = '';
+        return;
+      }
+      
+      if (password !== password2) {
+        message.className = 'error';
+        message.textContent = "Passwords don't match";
+      } else {
+        message.className = 'valid-requirement';
+        message.textContent = "Passwords match";
+      }
+    }
+
+    // Check password requirements
+    function checkPasswordRequirements() {
+      const password = document.getElementById('id_password').value;
+      
+      // Test against each requirement
+      document.getElementById('req-length').className = 
+        password.length >= 8 ? 'valid-requirement' : 'invalid-requirement';
+        
+      document.getElementById('req-uppercase').className = 
+        /[A-Z]/.test(password) ? 'valid-requirement' : 'invalid-requirement';
+        
+      document.getElementById('req-lowercase').className = 
+        /[a-z]/.test(password) ? 'valid-requirement' : 'invalid-requirement';
+        
+      document.getElementById('req-number').className = 
+        /[0-9]/.test(password) ? 'valid-requirement' : 'invalid-requirement';
+        
+      document.getElementById('req-special').className = 
+        /[^a-zA-Z0-9]/.test(password) ? 'valid-requirement' : 'invalid-requirement';
+        
+      // Also check password match if confirm field has content
+      if (document.getElementById('id_password2').value) {
+        checkPasswordMatch();
+      }
+    }
+
+    // Custom form submission to prevent losing field values
+    function submitForm(e) {
+      e.preventDefault();
+      
+      const form = document.getElementById('registration-form');
+      const formData = new FormData(form);
+      const username = document.getElementById('id_username').value;
+      const email = document.getElementById('id_email').value;
+      const password = document.getElementById('id_password').value;
+      const password2 = document.getElementById('id_password2').value;
+      
+      // Reset error state for fresh validation
+      let hasError = false;
+      document.getElementById('registration-error').innerHTML = '';
+      
+      // Client-side validation
+      if (!isValidEmail(email)) {
+        showError("Please enter a valid email address");
+        hasError = true;
+        return;
+      }
+      
+      if (password !== password2) {
+        showError("Passwords don't match");
+        hasError = true;
+        return;
+      }
+      
+      if (password.length < 8) {
+        showError("Password must be at least 8 characters");
+        hasError = true;
+        return;
+      }
+      
+      if (!/[A-Z]/.test(password)) {
+        showError("Password must contain at least one uppercase letter");
+        hasError = true;
+        return;
+      }
+      
+      if (!/[a-z]/.test(password)) {
+        showError("Password must contain at least one lowercase letter");
+        hasError = true;
+        return;
+      }
+      
+      if (!/[0-9]/.test(password)) {
+        showError("Password must contain at least one number");
+        hasError = true;
+        return;
+      }
+      
+      if (!/[^a-zA-Z0-9]/.test(password)) {
+        showError("Password must contain at least one special character");
+        hasError = true;
+        return;
+      }
+      
+      if (!hasError) {
+        // Get the CSRF token from the cookie
+        const csrftoken = getCookie('csrftoken');
+        
+        // Send the form data to the server
+        fetch("{% url 'register' %}", {
+          method: "POST",
+          body: formData,
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": csrftoken
+          }
+        })
+        .then(response => {
+          // Check if the server wants us to redirect
+          if (response.redirected) {
+            window.location.href = response.url;
+            return Promise.reject('Redirecting...');
+          }
+          
+          const hxRedirect = response.headers.get("HX-Redirect");
+          if (hxRedirect) {
+            window.location.href = hxRedirect;
+            return Promise.reject('Redirecting via HX-Redirect...');
+          }
+          
+          if (response.ok) {
+            // If successful but no redirect, check for success message
+            return response.json().then(data => {
+              if (data.message && data.message.includes("success")) {
+                window.location.href = "/register/success/?email=" + encodeURIComponent(email);
+                return Promise.reject('Redirecting to success page...');
+              }
+              return data;
+            });
+          }
+          
+          // If not ok, try to parse as JSON first
+          const contentType = response.headers.get("content-type");
+          if (contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then(errorData => {
+              // Format JSON errors into readable HTML
+              let errorHtml = '<ul class="error">';
+              
+              for (const field in errorData) {
+                if (Array.isArray(errorData[field])) {
+                  errorData[field].forEach(error => {
+                    errorHtml += `<li>${field === 'non_field_errors' ? '' : field + ': '}${error}</li>`;
+                  });
+                } else if (typeof errorData[field] === 'string') {
+                  errorHtml += `<li>${field}: ${errorData[field]}</li>`;
+                }
+              }
+              
+              errorHtml += '</ul>';
+              document.getElementById('registration-error').innerHTML = errorHtml;
+            });
+          } else {
+            // Fallback to text if not JSON
+            return response.text().then(errorText => {
+              document.getElementById('registration-error').innerHTML = errorText;
+            });
+          }
+        })
+        .catch(error => {
+          // Only show error if it's not a redirect
+          if (!error.includes('Redirecting')) {
+            console.error("Error:", error);
+            showError("An error occurred. Please try again.");
+          }
+        });
+      }
+    }
+    
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+    
+    function showError(message) {
+      const errorDiv = document.getElementById('registration-error');
+      errorDiv.innerHTML = `<ul class="error"><li>${message}</li></ul>`;
+    }
+    
+    // Get CSRF token from cookies
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+    
+    // Initialize password requirements on page load
+    window.addEventListener('load', function() {
+      checkPasswordRequirements();
+    });
+  </script>
+</body>
+</html>

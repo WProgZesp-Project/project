@@ -1,0 +1,164 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Split PDF</title>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&family=Montserrat&display=swap" rel="stylesheet" />
+  <script>
+  // To ustawienie musi być NA POCZĄTKU
+    htmx.config.withCredentials = true;
+  </script>
+  <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      color: #0d1215;
+      background-color: #90B8D6;
+      padding: 2rem;
+    }
+    h1 {
+      font-family: 'Libre Baskerville', serif;
+      color: #0d1215;
+    }
+    .split-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 4rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border-left: 6px solid #88CFA8;
+      text-align: left;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    label {
+      font-weight: 600;
+    }
+    input[type="file"],
+    input[type="text"] {
+      width: 100%;
+      padding: 1rem;
+      border-radius: 6px;
+      border: 2px dashed #85DECB;
+      background-color: #f0fdfa;
+      box-sizing: border-box;
+    }
+    .btn {
+      background-color: #6395EE;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+    .btn:hover {
+      background-color: #85DECB;
+    }
+    .download-btn {
+      margin-top: 0.75rem;
+    }
+    .result {
+      margin-top: 2rem;
+      background-color: #e9f9f5;
+      padding: 1rem;
+      border-radius: 6px;
+      border: 1px solid #85DECB;
+    }
+    .spinner {
+      animation: rotate 1s linear infinite;
+    }
+    .path {
+      stroke: #6395EE;
+      stroke-linecap: round;
+      animation: dash 1.5s ease-in-out infinite;
+    }
+    .result {
+      margin-top: 2rem;
+      background-color: #e9f9f5;
+      padding: 1rem;
+      border-radius: 6px;
+      border: 1px solid #85DECB;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes dash {
+      0% {
+        stroke-dasharray: 1, 150;
+        stroke-dashoffset: 0;
+      }
+      50% {
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: -35;
+      }
+      100% {
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: -124;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="split-container">
+    <h1>Split Your PDF</h1>
+    <form
+      id="split-form"
+      method="POST"
+      enctype="multipart/form-data"
+      hx-post="{% url 'split_pdf' %}"
+      hx-target="#split-result"
+      hx-include="[name=csrfmiddlewaretoken]"
+    >
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="file">Upload PDF:</label>
+        <input type="file" id="file" name="file" accept="application/pdf" required />
+      </div>
+      <div class="form-group">
+        <label for="ranges">Page ranges (e.g., 1-3,5,7-9):</label>
+        <input type="text" id="ranges" name="ranges" placeholder="e.g., 1-3,5,7-9" required />
+      </div>
+      <button type="submit" class="btn">Split PDF</button>
+    </form>
+
+    <div id="loading-spinner" style="display:none; text-align:center; margin-top:1rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" class="spinner" width="40" height="40" viewBox="0 0 50 50">
+        <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5" />
+      </svg>
+      <p style="font-weight: bold;">Splitting PDF...</p>
+    </div>
+
+    <div id="split-result" class="result"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('split-form');
+    const spinner = document.getElementById('loading-spinner');
+
+    form.addEventListener('submit', () => {
+      spinner.style.display = 'block';
+    });
+
+    document.body.addEventListener('htmx:afterRequest', () => {
+      spinner.style.display = 'none';
+    });
+
+    document.body.addEventListener('htmx:configRequest', (event) => {
+    const token = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+    event.detail.headers['X-CSRFToken'] = token;
+    event.detail.credentials = 'include';
+  });
+  </script>
+</body>
+</html>

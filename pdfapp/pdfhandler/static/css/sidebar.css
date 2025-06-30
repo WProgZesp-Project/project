@@ -1,0 +1,109 @@
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 250px;
+    height: 100%;
+    background-color: #85DECB;
+    padding: 30px 20px;
+    box-shadow: -4px 0 10px rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+    color: #0d1215;
+    transition: right 0.3s ease-in-out;
+    z-index: 100;
+}
+
+.sidebar.open {
+    right: 0;
+}
+
+.sidebar .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: #0d1215;
+}
+
+.sidebar hr {
+    margin: 15px 0;
+    border: none;
+    border-top: 2px solid #0d1215;
+}
+
+.sidebar div {
+    margin-bottom: 10px;
+}
+
+.sidebar a {
+    color: #0d1215;
+    text-decoration: none;
+}
+
+.auth-area {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-info {
+    font-size: 0.9em;
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    background-color: #85DECB;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 0 #6395EE;
+}
+
+.hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 20px;
+    height: 15px;
+}
+
+.hamburger span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background-color: #fff;
+    border-radius: 1px;
+}
+
+.username {
+    font-weight: bold;
+    color: #0d1215;
+}
+
+.sidebar-section {
+    cursor: pointer;
+    padding: 5px 0;
+}
+
+.submenu {
+    display: none;
+    padding-left: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.submenu.open {
+    display: block;
+}
+
+.submenu a {
+    color: #0d1215;
+    text-decoration: none;
+    font-weight: normal;
+    display: block;
+    margin-bottom: 5px;
+}

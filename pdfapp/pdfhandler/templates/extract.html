@@ -1,0 +1,209 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF Page Selector</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&family=Montserrat&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      color: #0d1215;
+      background-color: #90B8D6;
+      padding: 2rem;
+    }
+    h1 {
+      font-family: 'Libre Baskerville', serif;
+      color: #0d1215;
+    }
+    .merge-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 4rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-left: 6px solid #88CFA8;
+    text-align: left;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      width: 100%;
+    }
+    label {
+      font-weight: 600;
+    }
+    input[type="file"] {
+      border: 2px dashed #85DECB;
+      border-radius: 6px;
+      padding: 1rem;
+      width: 100%;
+      background-color: #f0fdfa;
+      color: #0d1215;
+      box-sizing: border-box;
+    }
+    .btn {
+      background-color: #6395EE;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+    .btn:hover {
+      background-color: #85DECB;
+    }
+    .result {
+      margin-top: 2rem;
+      background-color: #e9f9f5;
+      padding: 1rem;
+      border-radius: 6px;
+      border: 1px solid #85DECB;
+    }
+    .spinner {
+      animation: rotate 1s linear infinite;
+    }
+    .path {
+      stroke: #6395EE;
+      stroke-linecap: round;
+      animation: dash 1.5s ease-in-out infinite;
+    }
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes dash {
+      0% {
+        stroke-dasharray: 1, 150;
+        stroke-dashoffset: 0;
+      }
+      50% {
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: -35;
+      }
+      100% {
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: -124;
+      }
+    }
+  </style>
+</head>
+<body>
+    <div class="merge-container">
+        <h1>Upload PDF & Select Pages</h1>
+        <form id="pdfForm" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div>
+                <label for="pdfFile">Choose PDF File:</label>
+                <input type="file" id="pdfFile" name="file" accept=".pdf" required>
+                <p id="file-error" style="display: none;"></p>
+            </div>
+            <div>
+                <label for="pageNumbers">Select Pages:</label>
+                <input type="text" id="pageNumbers" name="pages" placeholder="e.g., 1,3,5-10" required>
+                <p id="page-error" style="display: none;"></p>
+            </div>
+            <button type="submit" class="btn">Upload & Process</button>
+            <p id="upload-message" style="display: none;"></p>
+        </form>
+        <div id="download-section" style="display: none;">
+            <h2>Download Extracted Pages</h2>
+            <a id="download-link" href="#">Download PDF</a>
+        </div>
+    </div>
+
+    <script>
+        const pdfForm = document.getElementById('pdfForm');
+        const pdfFile = document.getElementById('pdfFile');
+        const pageNumbersInput = document.getElementById('pageNumbers');
+        const fileError = document.getElementById('file-error');
+        const pageError = document.getElementById('page-error');
+        const uploadMessage = document.getElementById('upload-message');
+        const downloadSection = document.getElementById('download-section');
+        const downloadLink = document.getElementById('download-link');
+
+        function isValidPageRange(pageRange) {
+            const ranges = pageRange.split(',');
+            for (const range of ranges) {
+                if (!range.match(/^\d+$/) && !range.match(/^\d+-\d+$/)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        pdfFile.addEventListener('change', () => {
+            if (pdfFile.files.length > 0 && pdfFile.files[0].type !== 'application/pdf') {
+                fileError.textContent = "Invalid file type. Please upload a PDF.";
+                fileError.style.display = "block";
+                pdfFile.value = '';
+            } else {
+                fileError.style.display = "none";
+            }
+        });
+
+        pdfForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            if (!pdfFile.files || pdfFile.files.length === 0) {
+                fileError.textContent = "Please select a PDF file.";
+                fileError.style.display = "block";
+                return;
+            }
+
+            const pageNumbersValue = pageNumbersInput.value.trim();
+            if (!pageNumbersValue) {
+                pageError.textContent = "Please enter page numbers.";
+                pageError.style.display = "block";
+                return;
+            }
+
+            if (!isValidPageRange(pageNumbersValue)) {
+                pageError.textContent = "Invalid page range format. Please use e.g., 1,3,5-10";
+                pageError.style.display = "block";
+                return;
+            } else {
+                pageError.style.display = "none";
+            }
+
+            const formdata = new FormData();
+            formdata.append("file", pdfFile.files[0]);
+            formdata.append("pages", pageNumbersValue);
+
+            fetch('/api/extract-pages', {
+                method: 'POST',
+                body: formdata,
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error("Server error: " + text) });
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                downloadLink.href = url;
+                downloadLink.download =  'extract_' + pdfFile.files[0].name;
+                uploadMessage.textContent = "PDF uploaded and pages extracted successfully!";
+                uploadMessage.style.display = "block";
+                downloadSection.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                uploadMessage.textContent = "Error: " + error.message;
+                uploadMessage.style.display = "block";
+            });
+        });
+    </script>
+</body>
+</html>

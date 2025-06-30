@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.shortcuts import render
 from PyPDF2 import PdfReader, PdfWriter
+from ..views.operation_history import save_operation, save_operation_temp, OperationType
 import tempfile
 
 
@@ -35,16 +36,23 @@ def unlock_pdf_file(pdf_file, password):
 def remove_pdf_password(request):
     pdf_file = request.FILES.get('file')
     password = request.POST.get('password')
+
     if not pdf_file or not password:
         return JsonResponse(
             {'error': 'File and password are required.'}, status=400)
     temp_out_path, error = unlock_pdf_file(pdf_file, password)
+
     if error:
         return JsonResponse({'error': error}, status=400)
+
+    if request.user.is_authenticated:
+        save_operation(request, temp_out_path, OperationType.REMOVE_PASSWORD, [pdf_file.name])
+    else:
+        save_operation_temp(temp_out_path, OperationType.REMOVE_PASSWORD, [pdf_file.name])
+
     response = FileResponse(
         open(
             temp_out_path,
             'rb'),
-        as_attachment=True,
-        filename='unlocked.pdf')
+        as_attachment=True)
     return response
