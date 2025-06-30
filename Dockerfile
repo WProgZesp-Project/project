@@ -22,4 +22,4 @@ RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD ["gunicorn", "pdfapp.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "pdfapp.pdfapp.wsgi:application", "--bind", "0.0.0.0:8000"]
