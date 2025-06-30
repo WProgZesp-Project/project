@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
             name='OperationHistory',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('operation_type', models.CharField(choices=[('merge', 'Merge'), ('split', 'Split'), ('extract', 'Extract'), ('remove_pages', 'Remove Pages'), ('remove_password', 'Remove Password')], max_length=50)),
+                ('operation_type', models.CharField(choices=[('merge', 'Merge'), ('split', 'Split'), ('extract', 'Extract'), ('remove_pages', 'Remove Pages'), ('remove_password', 'Remove Password'), ('add_password', 'Add Password'), ('compress', 'Compress to ZIP')], max_length=50)),
                 ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
                 ('input_filenames', models.JSONField()),
                 ('result_filename', models.CharField(max_length=255)),
