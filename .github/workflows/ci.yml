@@ -156,23 +156,23 @@ jobs:
           docker build -t $NGINX_IMAGE_URI -f nginx/Dockerfile nginx/
           docker push $NGINX_IMAGE_URI
 
-            - name: Render ECS task definition
-              id: render-task-def
-              uses: aws-actions/amazon-ecs-render-task-definition@v1
-              with:
-                task-definition: task-definition.json
-                container-name: django
-                image: ${{ env.DJANGO_IMAGE_URI }}
-                environment-variables: |
-                  DJANGO_SETTINGS_MODULE=pdfapp.settings.prod
-                  POSTGRES_DB=${{ secrets.POSTGRES_DB }}
-                  POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-                  POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-                  POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
-                  POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
-                  EMAIL=${{ secrets.EMAIL }}
-                  EMAIL_PASS=${{ secrets.EMAIL_PASS }}
-                  SECRET_KEY=${{ secrets.SECRET_KEY }}
+      - name: Render ECS task definition
+        id: render-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: django
+          image: ${{ env.DJANGO_IMAGE_URI }}
+          environment-variables: |
+            DJANGO_SETTINGS_MODULE=pdfapp.settings.prod
+            POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
+            POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
+            EMAIL=${{ secrets.EMAIL }}
+            EMAIL_PASS=${{ secrets.EMAIL_PASS }}
+            SECRET_KEY=${{ secrets.SECRET_KEY }}
 
       - name: Render ECS task definition for Nginx
         id: render-task-def-nginx
