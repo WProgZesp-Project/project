@@ -8,7 +8,7 @@
   "containerDefinitions": [
     {
       "name": "django",
-      "image": "<DJANGO_IMAGE_PLACEHOLDER>",
+      "image": "django",
       "portMappings": [
         {
           "containerPort": 8000,
@@ -31,7 +31,7 @@
     },
     {
       "name": "nginx",
-      "image": "<NGINX_IMAGE_PLACEHOLDER>",
+      "image": "nginx",
       "essential": true,
       "portMappings": [
         {
