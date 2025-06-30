@@ -14,5 +14,8 @@ from whitenoise import WhiteNoise
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pdfapp.settings')
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+static_root = os.path.join(BASE_DIR, 'staticfiles')
+
 application = get_wsgi_application()
-application = WhiteNoise(application, root='/pełna/ścieżka/do/staticfiles')
+application = WhiteNoise(application, root=static_root)
