@@ -1,0 +1,46 @@
+services:
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: pdfdb
+      POSTGRES_USER: pdfuser
+      POSTGRES_PASSWORD: pdfpass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    env_file:
+      - .staging.env
+    depends_on:
+      - postgres
+    networks:
+      - backend
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - django
+    networks:
+      - backend
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
+networks:
+  backend:

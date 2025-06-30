@@ -1,5 +1,8 @@
 FROM python:3.12-alpine
 
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
 RUN apk add --no-cache \
     gcc \
     musl-dev \
@@ -15,13 +18,9 @@ COPY requirements.txt .
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY pdfapp/ .
 
-ARG ENV=PROD
-ENV ENV=${ENV}
-ENV PYTHONPATH=/app/pdfapp
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
 
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]

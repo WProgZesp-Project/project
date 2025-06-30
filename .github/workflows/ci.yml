@@ -35,7 +35,7 @@ jobs:
       POSTGRES_HOST: localhost
       POSTGRES_PORT: 5432
       TEST: true
-      DJANGO_SETTINGS_MODULE: pdfapp.settings
+      DJANGO_SETTINGS_MODULE: pdfapp.settings.dev
 
     steps:
     - name: Checkout code
@@ -79,7 +79,8 @@ jobs:
     env:
       AWS_ACCOUNT_ID: 384782264249
       AWS_REGION:    eu-north-1
-      ECR_REPOSITORY:    ${{ secrets.ECR_REPOSITORY }}
+      ECR_REPOSITORY_DJANGO:    ${{ secrets.ECR_REPOSITORY_DJANGO }}
+      ECR_REPOSITORY_NGINX:     ${{ secrets.ECR_REPOSITORY_NGINX }}
       ECS_CLUSTER:       ${{ secrets.ECS_CLUSTER }}
       ECS_SERVICE_NAME:  ${{ secrets.ECS_SERVICE_NAME }}
       ECS_TASK_FAMILY:   ${{ secrets.ECS_TASK_FAMILY }}
@@ -95,15 +96,17 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region:            ${{ env.AWS_REGION }}
 
-      - name: Ensure ECR repo exists
+      - name: Ensure ECR repos exist
         run: |
-          aws ecr describe-repositories \
-            --repository-names ${ECR_REPOSITORY} \
-          || aws ecr create-repository \
-            --repository-name ${ECR_REPOSITORY}
+          aws ecr describe-repositories --repository-names ${ECR_REPOSITORY_DJANGO} || aws ecr create-repository --repository-name ${ECR_REPOSITORY_DJANGO}
+          aws ecr describe-repositories --repository-names ${ECR_REPOSITORY_NGINX} || aws ecr create-repository --repository-name ${ECR_REPOSITORY_NGINX}
 
-      - name: Set image tag
-        run: echo "IMAGE_TAG=backend-${GITHUB_SHA}" >> $GITHUB_ENV
+      - name: Set image tags
+        run: |
+          echo "IMAGE_TAG=backend-${GITHUB_SHA}" >> $GITHUB_ENV
+          echo "DJANGO_IMAGE_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY_DJANGO}:${IMAGE_TAG}" >> $GITHUB_ENV
+          echo "NGINX_IMAGE_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY_NGINX}:${IMAGE_TAG}" >> $GITHUB_ENV
+
 
       - name: Login to Amazon ECR
         run: |
@@ -113,13 +116,15 @@ jobs:
             --username AWS \
             --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
 
-      - name: Build & Push Docker image
+      - name: Build & Push Django Docker image
         run: |
-          IMAGE_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${IMAGE_TAG}
-          echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
+          docker build -t $DJANGO_IMAGE_URI -f Dockerfile.django .
+          docker push $DJANGO_IMAGE_URI
 
-          docker build -t $IMAGE_URI .
-          docker push $IMAGE_URI
+      - name: Build & Push Nginx Docker image
+        run: |
+          docker build -t $NGINX_IMAGE_URI -f Dockerfile.nginx .
+          docker push $NGINX_IMAGE_URI
 
       - name: Render ECS task definition
         id: render-task-def
@@ -127,7 +132,7 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: django
-          image: ${{ env.IMAGE_URI }}
+          image: ${{ env.DJANGO_IMAGE_URI }}
           environment-variables: |
             ENV=PROD
             POSTGRES_DB=${{ secrets.POSTGRES_DB }}
@@ -139,7 +144,14 @@ jobs:
             EMAIL_PASS=${{ secrets.EMAIL_PASS }}
             SECRET_KEY=${{ secrets.SECRET_KEY }}
 
-
+      - name: Render Nginx image update
+        id: render-task-def-nginx
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ steps.render-task-def.outputs.task-definition }}
+          container-name: nginx
+          image: ${{ env.NGINX_IMAGE_URI }}
+          
       - name: Deploy to ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
