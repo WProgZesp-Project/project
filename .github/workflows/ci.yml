@@ -139,7 +139,7 @@ jobs:
 
       - name: Build & Push Nginx Docker image
         run: |
-          docker build -t $NGINX_IMAGE_URI -f nginx/Dockerfile .
+          docker build -t $NGINX_IMAGE_URI -f nginx/Dockerfile nginx/
           docker push $NGINX_IMAGE_URI
 
       - name: Render ECS task definition
