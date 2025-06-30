@@ -134,12 +134,12 @@ jobs:
 
       - name: Build & Push Django Docker image
         run: |
-          docker build -t $DJANGO_IMAGE_URI -f Dockerfile.django .
+          docker build -t $DJANGO_IMAGE_URI -f Dockerfile .
           docker push $DJANGO_IMAGE_URI
 
       - name: Build & Push Nginx Docker image
         run: |
-          docker build -t $NGINX_IMAGE_URI -f Dockerfile.nginx .
+          docker build -t $NGINX_IMAGE_URI -f nginx/Dockerfile .
           docker push $NGINX_IMAGE_URI
 
       - name: Render ECS task definition
