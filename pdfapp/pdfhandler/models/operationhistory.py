@@ -8,6 +8,7 @@ class OperationType(models.TextChoices):
     EXTRACT = 'extract', "Extract"
     REMOVE_PAGES = 'remove_pages', "Remove Pages"
     REMOVE_PASSWORD = "remove_password", "Remove Password"
+    ADD_PASSWORD = "add_password", "Add Password"
     COMPRESS_AND_ZIP = "compress", "Compress to ZIP"
 
 

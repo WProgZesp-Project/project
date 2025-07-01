@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='operationhistory',
             name='operation_type',
-            field=models.CharField(choices=[('merge', 'Merge'), ('split', 'Split'), ('extract', 'Extract'), ('remove_pages', 'Remove Pages'), ('remove_password', 'Remove Password'), ('compress_and_zip', 'Compress to ZIP')], max_length=50),
+            field=models.CharField(choices=[('merge', 'Merge'), ('split', 'Split'), ('extract', 'Extract'), ('remove_pages', 'Remove Pages'), ('remove_password', 'Remove Password'), ('add_password', 'Add Password'), ('compress_and_zip', 'Compress to ZIP')], max_length=50),
         ),
     ]
